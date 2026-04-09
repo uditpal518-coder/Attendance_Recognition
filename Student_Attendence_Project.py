@@ -111,7 +111,7 @@ def save_data(name, frame, faces):
         progress_bar.progress(i / 50)
         status_text.text(f"Saving Image: {i}/50")
 
-    st.success(f"Successfully! {name} data save..")
+    st.success(f"Successfully! ✅ {name} data save..")
 
 def train_system():
     X=[]
