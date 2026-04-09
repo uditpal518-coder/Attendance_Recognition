@@ -199,11 +199,7 @@ if st.session_state.logged_in:
         st.title("📊SMART ATTENDANCE DASHBOARD")
         st.write("welcome Back!👤Admin..")
         st.markdown("---")
-        st.warning("⚠️ Data resets on cloud restart")
-
-
-        st.markdown("---")
-
+        
         col1,col2,col3 = st.columns(3)
 
         with col1:
@@ -224,6 +220,8 @@ if st.session_state.logged_in:
         df['time'] = df['time'].astype(str).map(lambda x: x.split()[-1])
         df['time'] = pd.to_datetime(df['time'].astype(str)).dt.strftime('%I:%M%p')
         st.table(df)
+        st.markdown("---")
+        st.warning("⚠️ Data resets on cloud restart")
 
     elif st.session_state.page == "AddStudent":
         st.title("👤REGISTRATION NEW STUDENT")
