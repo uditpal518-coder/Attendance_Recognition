@@ -209,7 +209,7 @@ if st.session_state.logged_in:
         with col1:
             st.metric(label="Total Student", value=dashboard_total(),delta="5 New")
         with col2:
-            st.metric(label="Attemdance Today", value=dashboard(),delta=f"{round((dashboard() * 100 / dashboard_total()),2)}%")
+            st.metric(label="Attendance Today", value=dashboard(),delta=f"{round((dashboard() * 100 / dashboard_total()),2)}%")
         with col3:
             st.metric(label="Student Status", value="Ready",delta="normal")
 
@@ -240,7 +240,7 @@ if st.session_state.logged_in:
             faces = face_model.detectMultiScale(gray,minNeighbors=10,scaleFactor=1.1)
 
             if len(faces) > 0:
-                st.image(frame, channels="BGR", width=300, caption="Face Detected")
+                #st.image(frame, channels="BGR", width=300, caption="Face Detected")
                 if st.button("Save Data"):
                     save_data(name_input, frame, faces)
 
