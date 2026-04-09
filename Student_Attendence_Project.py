@@ -179,7 +179,7 @@ if st.session_state.logged_in:
     if st.sidebar.button("🏠Home"):
         st.session_state.page = "Home"
 
-    if st.sidebar.button(" ➕Add New Student"):
+    if st.sidebar.button("➕Add New Student"):
         st.session_state.page = "AddStudent"
 
     if st.sidebar.button("📸Mark Attendance"):
@@ -191,7 +191,7 @@ if st.session_state.logged_in:
 
 
     st.sidebar.markdown("---")
-    if st.sidebar.button("🤖System Train"):
+    if st.sidebar.button("⚙️System Train"):
         train_system()
 
     # --- PAGE LOGIC --
