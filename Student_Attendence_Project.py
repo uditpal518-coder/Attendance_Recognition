@@ -108,8 +108,8 @@ def save_data(name, frame, faces):
 
             cv2.imwrite(f"{path}/{name}_{i}.jpg",face_img)
 
-        progress_bar.progress(i / 200)
-        status_text.text(f"Saving Image: {i}/200")
+        progress_bar.progress(i / 50)
+        status_text.text(f"Saving Image: {i}/50")
 
     st.success(f"Successfully! {name} data save..")
 
