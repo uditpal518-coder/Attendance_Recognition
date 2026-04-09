@@ -15,7 +15,7 @@ BASE_DIR = "students"
 os.makedirs(BASE_DIR, exist_ok=True)
 HAAR_FILE = "haarcascade_frontalface_default.xml"
 
-st.set_page_config(layout='wide', page_title="Smart Attendance System", page_icon="🇮🇳")
+st.set_page_config(layout='wide', page_title="Smart Attendance System", page_icon="🎓")
 
 
 
