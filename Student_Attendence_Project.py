@@ -6,6 +6,7 @@ import joblib
 import random
 import pandas as pd
 from datetime import datetime
+import pytz
 import sqlite3
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
@@ -286,7 +287,7 @@ if st.session_state.logged_in:
                             name = "Unknown"
                         #name = model.predict(x_pca)[0]
                         if name != "Unknown":
-                            now = datetime.now()
+                            now = datetime.now(pytz.timezone('Asia/Kolkata')
                             current_date =now.strftime("%Y-%m-%d")
                             current_time = now.strftime("%H:%M:%S")
     
