@@ -297,7 +297,7 @@ if st.session_state.logged_in:
                                 st.warning(f"You have Already marke ✅ Today Attendance {name}")
     
                             st.success(f"Recognized: {name}") 
-                            st.success(f"Confidence Score: {confidence}) 
+                            st.success(f"Confidence Score: {confidence}") 
                             st.success(f"Date: {current_date}") 
                             st.success(f"Time: {current_time}")
                             st.image(face_img, caption=name, width=150)
