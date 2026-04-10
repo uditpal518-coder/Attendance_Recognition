@@ -275,23 +275,34 @@ if st.session_state.logged_in:
 
                         flat_img = gray_face.flatten().astype('float32') / 255.0
                         x_pca = pca.transform([flat_img])
-                        name = model.predict(x_pca)[0]
+                        probs = model.predict_proba(x_pca)[0]
+                        max_prob = np.max(probs)
+                        predicted_class = model.classes_[np.argmax(probs)]
 
-                        now = datetime.now()
-                        current_date =now.strftime("%Y-%m-%d")
-                        current_time = now.strftime("%H:%M:%S")
-
-                        if save_attendance_to_db(name, current_date, current_time):
-                            st.success(f"{name} Marked Present ✅!")
-
+                        confidence = max_prob * 100
+                        if confidence >= 70:
+                            name = predicted_class
                         else:
-                            st.warning(f"You have Already marke ✅ Today Attendance {name}")
-
-                        st.success(f"Recognized: {name}") 
-                        st.success(f"Date: {current_date}") 
-                        st.success(f"Time: {current_time}")
-                        st.image(face_img, caption=name, width=150)
-                    
+                            name = "Unknown"
+                        #name = model.predict(x_pca)[0]
+                        if name != "Unknown"
+                            now = datetime.now()
+                            current_date =now.strftime("%Y-%m-%d")
+                            current_time = now.strftime("%H:%M:%S")
+    
+                            if save_attendance_to_db(name, current_date, current_time):
+                                st.success(f"{name} Marked Present ✅!")
+    
+                            else:
+                                st.warning(f"You have Already marke ✅ Today Attendance {name}")
+    
+                            st.success(f"Recognized: {name}") 
+                            st.success(f"Confidence Score: {confidence}) 
+                            st.success(f"Date: {current_date}") 
+                            st.success(f"Time: {current_time}")
+                            st.image(face_img, caption=name, width=150)
+                        else:
+                            st.error("Unknown Person")
                 else: 
                     st.warning("Face not Detect! Please Try Again...")    
 else:
