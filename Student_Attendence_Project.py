@@ -280,7 +280,7 @@ if st.session_state.logged_in:
                         predicted_class = model.classes_[np.argmax(probs)]
 
                         confidence = max_prob * 100
-                        if confidence >= 70:
+                        if confidence >= 75:
                             name = predicted_class
                         else:
                             name = "Unknown"
