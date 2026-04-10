@@ -235,7 +235,7 @@ if st.session_state.logged_in:
 
             face_model=cv2.CascadeClassifier(HAAR_FILE)
             gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-            faces = face_model.detectMultiScale(gray,minNeighbors=10,scaleFactor=1.1)
+            faces = face_model.detectMultiScale(gray, 1.3, 5)
 
             if len(faces) > 0:
                 #st.image(frame, channels="BGR", width=300, caption="Face Detected")
@@ -265,7 +265,7 @@ if st.session_state.logged_in:
                 frame = cv2.imdecode(file_bytes, 1)
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 face_model = cv2.CascadeClassifier(HAAR_FILE)
-                faces = face_model.detectMultiScale(gray, minNeighbors=10,scaleFactor=1.1)
+                faces = face_model.detectMultiScale(gray, 1.3, 5)
 
                 if len(faces) > 0:
                     for (x,y,w,h) in faces:
