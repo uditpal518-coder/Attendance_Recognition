@@ -147,7 +147,7 @@ def train_system():
         
     else:
         st.sidebar.error("Data Lessthan for Training Perpose")
-    st.sidebar.success(" Model Trained SuccessFully!")
+st.sidebar.success(" Model Trained SuccessFully!")
 
 
 
