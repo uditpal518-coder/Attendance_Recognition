@@ -99,7 +99,7 @@ def save_data(name, frame, faces):
     progress_bar = st.progress(0)
     status_text = st.empty()
 
-    for i in range(1,51):
+    for i in range(1,201):
         for (x,y,w,h) in faces:
             face_img = frame[y:y+h,x:x+w]
             face_img = cv2.resize(face_img,(200,200))
@@ -109,8 +109,8 @@ def save_data(name, frame, faces):
 
             cv2.imwrite(f"{path}/{name}_{i}.jpg",face_img)
 
-        progress_bar.progress(i / 50)
-        status_text.text(f"Saving Image: {i}/50")
+        progress_bar.progress(i / 200)
+        status_text.text(f"Saving Image: {i}/200")
 
     st.success(f"Successfully! ✅ {name} data save..")
 
