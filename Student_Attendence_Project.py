@@ -143,7 +143,7 @@ def train_system():
 
         joblib.dump(pca, "pca_model.pkl")
         joblib.dump(model, "lr_model.pkl")
-        break
+        return
         
     else:
         st.sidebar.error("Data Lessthan for Training Perpose")
