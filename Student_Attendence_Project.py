@@ -285,7 +285,7 @@ if st.session_state.logged_in:
                         else:
                             name = "Unknown"
                         #name = model.predict(x_pca)[0]
-                        if name != "Unknown"
+                        if name != "Unknown":
                             now = datetime.now()
                             current_date =now.strftime("%Y-%m-%d")
                             current_time = now.strftime("%H:%M:%S")
