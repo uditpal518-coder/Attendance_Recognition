@@ -287,7 +287,7 @@ if st.session_state.logged_in:
                             name = "Unknown"
                         #name = model.predict(x_pca)[0]
                         if name != "Unknown":
-                            now = datetime.now(pytz.timezone('Asia/Kolkata')
+                            now = datetime.now(pytz.timezone('Asia/Kolkata'))
                             current_date =now.strftime("%Y-%m-%d")
                             current_time = now.strftime("%H:%M:%S")
     
