@@ -143,10 +143,7 @@ def train_system():
 
         joblib.dump(pca, "pca_model.pkl")
         joblib.dump(model, "lr_model.pkl")
-        return st.sidebar.success(" Model Trained SuccessFully!")
-
-
-        
+        st.sidebar.success(" Model Trained SuccessFully!")   
     else:
         st.sidebar.error("Data Lessthan for Training Perpose")
     
