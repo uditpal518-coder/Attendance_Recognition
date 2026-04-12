@@ -99,7 +99,7 @@ def save_data(name, frame, faces):
     progress_bar = st.progress(0)
     status_text = st.empty()
 
-    for i in range(1,201):
+    for i in range(1,101):
         for (x,y,w,h) in faces:
             face_img = frame[y:y+h,x:x+w]
             face_img = cv2.resize(face_img,(200,200))
@@ -109,8 +109,8 @@ def save_data(name, frame, faces):
 
             cv2.imwrite(f"{path}/{name}_{i}.jpg",face_img)
 
-        progress_bar.progress(i / 200)
-        status_text.text(f"Saving Image: {i}/200")
+        progress_bar.progress(i / 100)
+        status_text.text(f"Saving Image: {i}/100")
 
     st.success(f"Successfully! ✅ {name} data save..")
 
@@ -138,7 +138,7 @@ def train_system():
         pca = PCA(.9999)
         X_pca = pca.fit_transform(X)
 
-        model = LogisticRegression(max_iter=200)
+        model = LogisticRegression(max_iter=1000)
         model.fit(X_pca, y)
 
         joblib.dump(pca, "pca_model.pkl")
@@ -214,6 +214,7 @@ if st.session_state.logged_in:
         df = pd.read_sql("""
         SELECT student_name, time, date 
         FROM attendance_records 
+        where date = DATE('now')
         ORDER BY id DESC 
         LIMIT 5
         """, conn)
