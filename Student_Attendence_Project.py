@@ -226,7 +226,7 @@ def train_system():
                 else:
                     st.sidebar.error("Data Lessthan for Training Perpose")
     else: 
-        st.warning(" minimum two or more students data train!")
+        st.sidebar.warning(" minimum two or more students data train!")
 def load_models():
     try:
         pca = joblib.load("pca_model.pkl")
