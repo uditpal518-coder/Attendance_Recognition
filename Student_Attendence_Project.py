@@ -318,16 +318,6 @@ if st.session_state.logged_in:
 
     elif st.session_state.page == "AddStudent":
         st.title("👤REGISTRATION NEW STUDENT")
-
-        name_input = st.text_input("Enter Student Name").capitalize()
-        camera_img = st.camera_input("Take Photo!")
-        if camera_img is not None and name_input:
-            file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
-            frame = cv2.imdecode(file_bytes, 1)
-
-            face_model=cv2.CascadeClassifier(HAAR_FILE)
-            gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-            faces = face_model.detectMultiScale(gray, 1.3, 5)
             with st.form("add_student_detail", clear_on_submit=True):
                 name_input = st.text_input("Enter Student Name")
                 name_input = name_input.capitalize()
@@ -337,7 +327,7 @@ if st.session_state.logged_in:
                         frame = cv2.imdecode(file_bytes, 1)
                         face_model=cv2.CascadeClassifier(HAAR_FILE)
                         gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-                        faces = face_model.detectMultiScale(gray,minNeighbors=10,scaleFactor=1.1)
+                        faces = face_model.detectMultiScale(gray, 1.3 5)
                         if len(faces) > 0:
                             for (x,y,w,h) in faces:
                                 face_img = frame[y:y+h,x:x+w]
