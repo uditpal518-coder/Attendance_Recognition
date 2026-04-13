@@ -329,7 +329,7 @@ if st.session_state.logged_in:
                         frame = cv2.imdecode(file_bytes, 1)
                         face_model=cv2.CascadeClassifier(HAAR_FILE)
                         gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-                        faces = face_model.detectMultiScale(gray, 1.3, 5)
+                        faces = face_model.detectMultiScale(gray, minNeighbors=10, scaleFactor=1.1)
                         if len(faces) > 0:
                             for (x,y,w,h) in faces:
                                 face_img = frame[y:y+h,x:x+w]
@@ -430,6 +430,7 @@ if st.session_state.logged_in:
                     result =delete_student(id,name)
                     if result:
                         st.success(f"Successfully deleted {name} ")
+                        time.sleep(5)
                         st.rerun()
                     else:
                         st.error("No student found with this ID/Name")
