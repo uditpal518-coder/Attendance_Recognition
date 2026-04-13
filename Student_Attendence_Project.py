@@ -199,33 +199,34 @@ def train_system():
     if not folders:
         st.sidebar.error("Do not have any folder for Training")
         return
-    with sidebar:
-        with st.spinner("Please Wait! Model are Train On new data..."):
-            st.sidebar.info("Please Wait! Model are Train new Data....  ")
-        
-            for name in folders:
-                for img in os.listdir(os.path.join(BASE_DIR,name)):
-                    img_path = os.path.join(BASE_DIR,name,img)
-                    img = cv2.imread(img_path)
-                    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                    if gray_img is not None:
-                        X.append(gray_img.flatten() / 255.0)
-                        y.append(name)
-        
-            if len(X) > 0:
-                pca = PCA(.9999)
-                X_pca = pca.fit_transform(X)
-        
-                model = LogisticRegression(max_iter=1000)
-                model.fit(X_pca, y)
-        
-                joblib.dump(pca, "pca_model.pkl")
-                joblib.dump(model, "lr_model.pkl")
-                st.success(" Model Trained SuccessFully!")   
-            else:
-                st.sidebar.error("Data Lessthan for Training Perpose")
+    if len(folders) >= 2:
+        with sidebar:
+            with st.spinner("Please Wait! Model are Train On new data..."):
+                st.sidebar.info("Please Wait! Model are Train new Data....  ")
             
-
+                for name in folders:
+                    for img in os.listdir(os.path.join(BASE_DIR,name)):
+                        img_path = os.path.join(BASE_DIR,name,img)
+                        img = cv2.imread(img_path)
+                        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                        if gray_img is not None:
+                            X.append(gray_img.flatten() / 255.0)
+                            y.append(name)
+            
+                if len(X) > 0:
+                    pca = PCA(.9999)
+                    X_pca = pca.fit_transform(X)
+            
+                    model = LogisticRegression(max_iter=1000)
+                    model.fit(X_pca, y)
+        
+                    joblib.dump(pca, "pca_model.pkl")
+                    joblib.dump(model, "lr_model.pkl")
+                    st.success(" Model Trained SuccessFully!")   
+                else:
+                    st.sidebar.error("Data Lessthan for Training Perpose")
+    else: 
+        st.warning(" minimum two or more students data train!")
 def load_models():
     try:
         pca = joblib.load("pca_model.pkl")
