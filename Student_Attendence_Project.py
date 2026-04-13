@@ -299,8 +299,21 @@ if st.session_state.logged_in:
         ORDER BY id DESC 
         LIMIT 5
         """, conn)
-        st.table(df)
+        if not df.empty:
+            st.table(df)
+        else:
+            st.info("No attendance marked for today yet!")
+
+        csv = df.to_csv(index=False).encode('utf-8')
+
+        st.download_button(
+            label="📥 Download as CSV (Excel)",
+            data=csv,
+            file_name="students_data.csv",
+            mime="text/csv",
+        )
         st.markdown("---")
+        
         st.warning("⚠️ Data resets on cloud restart")
 
     elif st.session_state.page == "AddStudent":
@@ -316,36 +329,36 @@ if st.session_state.logged_in:
             gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             faces = face_model.detectMultiScale(gray, 1.3, 5)
             with st.form("add_student_detail", clear_on_submit=True):
-            name_input = st.text_input("Enter Student Name")
-            name_input = name_input.capitalize()
-            camera_img = st.camera_input("Take Photo!")
-            if camera_img is not None and name_input:
-                    file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
-                    frame = cv2.imdecode(file_bytes, 1)
-                    face_model=cv2.CascadeClassifier(HAAR_FILE)
-                    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-                    faces = face_model.detectMultiScale(gray,minNeighbors=10,scaleFactor=1.1)
-                    if len(faces) > 0:
-                        for (x,y,w,h) in faces:
-                            face_img = frame[y:y+h,x:x+w]
-                            face_img = cv2.resize(face_img,(200,200))        
-                    else:
-                        st.warning("Face Not Detect! Please Try Again...")
+                name_input = st.text_input("Enter Student Name")
+                name_input = name_input.capitalize()
+                camera_img = st.camera_input("Take Photo!")
+                if camera_img is not None and name_input:
+                        file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
+                        frame = cv2.imdecode(file_bytes, 1)
+                        face_model=cv2.CascadeClassifier(HAAR_FILE)
+                        gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+                        faces = face_model.detectMultiScale(gray,minNeighbors=10,scaleFactor=1.1)
+                        if len(faces) > 0:
+                            for (x,y,w,h) in faces:
+                                face_img = frame[y:y+h,x:x+w]
+                                face_img = cv2.resize(face_img,(200,200))        
+                        else:
+                            st.warning("Face Not Detect! Please Try Again...")
+    
+                elif camera_img is not None and not name_input:
+                    st.warning("Enter Student Name!")
+                else:
+                    st.info("Please enter a Student Name and Take a Photo!")
 
-            elif camera_img is not None and not name_input:
-                st.warning("Enter Student Name!")
-            else:
-                st.info("Please enter a Student Name and Take a Photo!")
-
-            submitted = st.form_submit_button("Save Data")
-            if submitted:
-                st.image(face_img, channels="BGR", width=300, caption="Face Detected")
-                save_data(name_input, frame, faces)
-                stu_info(name_input)
-                st.toast(f"{name_input} added 🎉")
-                st.balloons()
-                time.sleep(5)
-                st.rerun()
+                submitted = st.form_submit_button("Save Data")
+                if submitted:
+                    st.image(face_img, channels="BGR", width=300, caption="Face Detected")
+                    save_data(name_input, frame, faces)
+                    stu_info(name_input)
+                    st.toast(f"{name_input} added 🎉")
+                    st.balloons()
+                    time.sleep(5)
+                    st.rerun()
          
     elif st.session_state.page == "Attendance":
         st.title("👤ATTENDANCE RECOGNITION")
