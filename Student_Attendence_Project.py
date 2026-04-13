@@ -322,7 +322,7 @@ if st.session_state.logged_in:
         with st.form("add_student_detail", clear_on_submit=True):
             name_input = st.text_input("Enter Student Name").capitalize()
             camera_img = st.camera_input("Take Photo!")
-            if camera_img is not None and name_input is not None:
+            if camera_img is not None and name_input != "":
                     file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
                     frame = cv2.imdecode(file_bytes, 1)
                     face_model=cv2.CascadeClassifier(HAAR_FILE)
@@ -335,7 +335,7 @@ if st.session_state.logged_in:
                     else:
                         st.warning("Face Not Detect! Please Try Again...")
 
-            elif camera_img is not None and name_input:
+            elif camera_img is not None and name_input = "":
                 st.warning("Enter Student Name!")
             else:
                 st.info("Please enter a Student Name and Take a Photo!")
