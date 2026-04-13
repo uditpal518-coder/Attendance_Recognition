@@ -335,7 +335,7 @@ if st.session_state.logged_in:
                     else:
                         st.warning("Face Not Detect! Please Try Again...")
 
-            elif camera_img is not None and name_input = "":
+            elif camera_img is not None and name_input == "":
                 st.warning("Enter Student Name!")
             else:
                 st.info("Please enter a Student Name and Take a Photo!")
