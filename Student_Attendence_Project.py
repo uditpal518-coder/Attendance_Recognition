@@ -18,10 +18,10 @@ st.set_page_config(layout='wide', page_title="Smart Attendance System", page_ico
 
 st.markdown("""
 <style>
-/* Background */
+/* Background 
 .stApp {
     background: linear-gradient(to right, #1f4037, #99f2c8);
-}
+}*/
 
 /* Titles */
 h1, h2, h3 {
@@ -320,10 +320,9 @@ if st.session_state.logged_in:
     elif st.session_state.page == "AddStudent":
         st.title("👤REGISTRATION NEW STUDENT")
         with st.form("add_student_detail", clear_on_submit=True):
-            name_input = st.text_input("Enter Student Name")
-            name_input = name_input.capitalize()
+            name_input = st.text_input("Enter Student Name").capitalize()
             camera_img = st.camera_input("Take Photo!")
-            if camera_img is not None and name_input:
+            if camera_img is not None and name_input is not None:
                     file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
                     frame = cv2.imdecode(file_bytes, 1)
                     face_model=cv2.CascadeClassifier(HAAR_FILE)
@@ -336,7 +335,7 @@ if st.session_state.logged_in:
                     else:
                         st.warning("Face Not Detect! Please Try Again...")
 
-            elif camera_img is not None and not name_input:
+            elif camera_img is not None and name_input:
                 st.warning("Enter Student Name!")
             else:
                 st.info("Please enter a Student Name and Take a Photo!")
