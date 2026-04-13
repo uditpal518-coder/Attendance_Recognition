@@ -200,9 +200,8 @@ def train_system():
         st.sidebar.error("Do not have any folder for Training")
         return
     if len(folders) >= 2:
-        with sidebar:
-            with st.spinner("Please Wait! Model are Train On new data..."):
-                st.sidebar.info("Please Wait! Model are Train new Data....  ")
+        with st.sidebar:
+            with st.spinner("Please Wait! Model are Train new data...")
             
                 for name in folders:
                     for img in os.listdir(os.path.join(BASE_DIR,name)):
