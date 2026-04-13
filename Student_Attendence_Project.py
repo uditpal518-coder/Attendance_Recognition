@@ -300,7 +300,7 @@ if st.session_state.logged_in:
         LIMIT 5
         """, conn)
         if not df.empty:
-            df['time'] = pd.to_datetime(df['time]).dt.strftime('%I:%M %p')
+            df['time'] = pd.to_datetime(df['time]).dt.strftime("%I:%M %p")
             st.table(df)
         else:
             st.info("No attendance marked for today yet!")
