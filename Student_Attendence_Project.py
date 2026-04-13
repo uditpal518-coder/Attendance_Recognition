@@ -320,7 +320,7 @@ if st.session_state.logged_in:
     elif st.session_state.page == "AddStudent":
         st.title("👤REGISTRATION NEW STUDENT")
         with st.form("add_student_detail", clear_on_submit=True):
-             submitted = st.form_submit_button("Save Data")
+            submitted = st.form_submit_button("Save Data")
             if submitted:
                 name_input = st.text_input("Enter Student Name").capitalize()
                 camera_img = st.camera_input("Take Photo!")
