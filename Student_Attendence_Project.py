@@ -200,8 +200,8 @@ def train_system():
         st.sidebar.error("Do not have any folder for Training")
         return
     if len(folders) >= 2:
-        with st.sidebar:
-            with st.spinner("Please Wait! Model are Train new data..."):
+        with st.spinner("Please Wait! Model are Train new data..."):
+            with st.sidebar:
             
                 for name in folders:
                     for img in os.listdir(os.path.join(BASE_DIR,name)):
@@ -300,6 +300,7 @@ if st.session_state.logged_in:
         LIMIT 5
         """, conn)
         if not df.empty:
+            df['time'] = pd.to_datetime(df['time]).dt.strftime('%I:%M %p')
             st.table(df)
         else:
             st.info("No attendance marked for today yet!")
