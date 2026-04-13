@@ -322,36 +322,34 @@ if st.session_state.logged_in:
         with st.form("add_student_detail", clear_on_submit=True):
             name_input = st.text_input("Enter Student Name").capitalize()
             camera_img = st.camera_input("Take Photo!")
-            submitted = st.form_submit_button("Save Data")
-            if submitted:
-                if camera_img is not None and name_input != "":
-                        file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
-                        frame = cv2.imdecode(file_bytes, 1)
-                        face_model=cv2.CascadeClassifier(HAAR_FILE)
-                        gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-                        faces = face_model.detectMultiScale(gray, minNeighbors=10, scaleFactor=1.1)
-                        if len(faces) > 0:
-                            for (x,y,w,h) in faces:
-                                face_img = frame[y:y+h,x:x+w]
-                                face_img = cv2.resize(face_img,(200,200))   
-                                st.image(face_img, channels="BGR", width=300, caption="Face Detected")
+            if camera_img is not None and name_input != "":
+                    file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
+                    frame = cv2.imdecode(file_bytes, 1)
+                    face_model=cv2.CascadeClassifier(HAAR_FILE)
+                    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+                    faces = face_model.detectMultiScale(gray, minNeighbors=10, scaleFactor=1.1)
+                    if len(faces) > 0:
+                        for (x,y,w,h) in faces:
+                            face_img = frame[y:y+h,x:x+w]
+                            face_img = cv2.resize(face_img,(200,200))   
+                            st.image(face_img, channels="BGR", width=300, caption="Face Detected")
+                            submitted = st.form_submit_button("Save Data")
+                            if submitted:
                                 save_data(name_input, frame, faces)
                                 stu_info(name_input)
                                 st.toast(f"{name_input} added 🎉")
                                 st.balloons()
                                 time.sleep(5)
                                 st.rerun()
-                        else:
-                            st.warning("Face Not Detect! Please Try Again...")
+                    else:
+                        st.warning("Face Not Detect! Please Try Again...")
 
-                elif camera_img is not None and name_input == "":
-                    st.warning("Enter Student Name!")
-                else:
-                    st.info("Please enter a Student Name and Take a Photo!")
+            elif camera_img is not None and name_input == "":
+                st.warning("Enter Student Name!")
+            else:
+                st.info("Please enter a Student Name and Take a Photo!")
 
-
-                
-         
+   
     elif st.session_state.page == "Attendance":
         st.title("👤ATTENDANCE RECOGNITION")
         pca, model = load_models()
