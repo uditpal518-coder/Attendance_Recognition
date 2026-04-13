@@ -322,33 +322,35 @@ if st.session_state.logged_in:
         with st.form("add_student_detail", clear_on_submit=True):
             name_input = st.text_input("Enter Student Name").capitalize()
             camera_img = st.camera_input("Take Photo!")
-            if camera_img is not None and name_input != "":
-                    file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
-                    frame = cv2.imdecode(file_bytes, 1)
-                    face_model=cv2.CascadeClassifier(HAAR_FILE)
-                    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-                    faces = face_model.detectMultiScale(gray, 1.3, 5)
-                    if len(faces) > 0:
-                        for (x,y,w,h) in faces:
-                            face_img = frame[y:y+h,x:x+w]
-                            face_img = cv2.resize(face_img,(200,200))        
-                    else:
-                        st.warning("Face Not Detect! Please Try Again...")
-
-            elif camera_img is not None and name_input == "":
-                st.warning("Enter Student Name!")
-            else:
-                st.info("Please enter a Student Name and Take a Photo!")
-
-            submitted = st.form_submit_button("Save Data")
+             submitted = st.form_submit_button("Save Data")
             if submitted:
-                st.image(face_img, channels="BGR", width=300, caption="Face Detected")
-                save_data(name_input, frame, faces)
-                stu_info(name_input)
-                st.toast(f"{name_input} added 🎉")
-                st.balloons()
-                time.sleep(5)
-                st.rerun()
+                if camera_img is not None and name_input != "":
+                        file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
+                        frame = cv2.imdecode(file_bytes, 1)
+                        face_model=cv2.CascadeClassifier(HAAR_FILE)
+                        gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+                        faces = face_model.detectMultiScale(gray, 1.3, 5)
+                        if len(faces) > 0:
+                            for (x,y,w,h) in faces:
+                                face_img = frame[y:y+h,x:x+w]
+                                face_img = cv2.resize(face_img,(200,200))   
+                                st.image(face_img, channels="BGR", width=300, caption="Face Detected")
+                                save_data(name_input, frame, faces)
+                                stu_info(name_input)
+                                st.toast(f"{name_input} added 🎉")
+                                st.balloons()
+                                time.sleep(5)
+                                st.rerun()
+                        else:
+                            st.warning("Face Not Detect! Please Try Again...")
+
+                elif camera_img is not None and name_input == "":
+                    st.warning("Enter Student Name!")
+                else:
+                    st.info("Please enter a Student Name and Take a Photo!")
+
+
+                
          
     elif st.session_state.page == "Attendance":
         st.title("👤ATTENDANCE RECOGNITION")
