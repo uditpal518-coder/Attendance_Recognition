@@ -295,7 +295,7 @@ if st.session_state.logged_in:
         df = pd.read_sql("""
         SELECT student_name, time, date 
         FROM attendance_records 
-        where date = DATE('now', 'localtime)
+        where date = DATE('now', 'localtime')
         ORDER BY id DESC 
         LIMIT 5
         """, conn)
