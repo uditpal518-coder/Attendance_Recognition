@@ -322,7 +322,7 @@ if st.session_state.logged_in:
         with st.form("add_student_detail", clear_on_submit=True):
             name_input = st.text_input("Enter Student Name").capitalize()
             camera_img = st.camera_input("Take Photo!")
-             submitted = st.form_submit_button("Save Data")
+            submitted = st.form_submit_button("Save Data")
             if submitted:
                 if camera_img is not None and name_input != "":
                         file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
