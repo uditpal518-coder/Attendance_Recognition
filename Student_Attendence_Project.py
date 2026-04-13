@@ -7,16 +7,55 @@ import random
 import pandas as pd
 from datetime import datetime
 import pytz
+import time
+import shutil
 import sqlite3
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 
 # --- SETTINGS ---
+st.set_page_config(layout='wide', page_title="Smart Attendance System", page_icon="🎓")
+
+st.markdown("""
+<style>
+/* Background */
+.stApp {
+    background: linear-gradient(to right, #1f4037, #99f2c8);
+}
+
+/* Titles */
+h1, h2, h3 {
+    color: #ffffff;
+    text-align: center;
+}
+
+/* Buttons */
+.stButton>button {
+    background-color: #ff4b4b;
+    color: white;
+    border-radius: 10px;
+    height: 3em;
+    width: 100%;
+    font-size: 16px;
+}
+
+/* Input box */
+.stTextInput>div>div>input {
+    border-radius: 10px;
+}
+
+/* Cards effect */
+.block-container {
+    padding: 2rem;
+    border-radius: 15px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 BASE_DIR = "students"
 os.makedirs(BASE_DIR, exist_ok=True)
 HAAR_FILE = "haarcascade_frontalface_default.xml"
-
-st.set_page_config(layout='wide', page_title="Smart Attendance System", page_icon="🎓")
 
 
 
@@ -57,7 +96,13 @@ def init_db():
         time TEXT
     )
     """)
-
+    cursor.execute("""               
+    CREATE TABLE IF NOT EXISTS students_info (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_name TEXT 
+    );
+    
+    """)
     conn.commit()
     conn.close()
 
@@ -85,12 +130,44 @@ def save_attendance_to_db(name, date, time):
     except Exception as e:
         st.error(f"Database Error: {e}")
         return False
-    
-    
 
+def stu_info(name):
+    try:
+        conn = sqlite3.connect("attendance_db")
+        cursor = conn.cursor()
+        query = "INSERT INTO students_info (Student_name) VALUES (?)"
+        cursor.execute(query,(name,))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        st.error(f"Database Error: {e}")
+        return False
+
+def delete_student(student_id, student_name):
+    try:
+        conn = sqlite3.connect("attendance_db")
+        cursor = conn.cursor()
+
+        # Delete from database
+        cursor.execute("DELETE FROM students_info WHERE id = ? AND student_name = ?", (student_id, student_name))
+        delete_rows = cursor.rowcount
+        conn.commit()
+        conn.close()
+
+        # 🔥 Delete folder (optional but important)
         
+        if delete_rows == 0:
+            return False
+        folder_path = os.path.join(BASE_DIR, student_name)
+        if os.path.exists(folder_path):
+            shutil.rmtree(folder_path)
 
-# --- FUNCTIONS ---
+        return True
+
+    except Exception as e:
+        st.error(f"Delete Error: {e}")
+        return False
 
 def save_data(name, frame, faces):
     path = os.path.join(BASE_DIR, name)
@@ -122,31 +199,32 @@ def train_system():
     if not folders:
         st.sidebar.error("Do not have any folder for Training")
         return
-    
-    st.sidebar.info("Please Wait! Model are Train new Data....  ")
-
-    for name in folders:
-        for img in os.listdir(os.path.join(BASE_DIR,name)):
-            img_path = os.path.join(BASE_DIR,name,img)
-            img = cv2.imread(img_path)
-            gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            if gray_img is not None:
-                X.append(gray_img.flatten() / 255.0)
-                y.append(name)
-
-    if len(X) > 0:
-        pca = PCA(.9999)
-        X_pca = pca.fit_transform(X)
-
-        model = LogisticRegression(max_iter=1000)
-        model.fit(X_pca, y)
-
-        joblib.dump(pca, "pca_model.pkl")
-        joblib.dump(model, "lr_model.pkl")
-        st.sidebar.success(" Model Trained SuccessFully!")   
-    else:
-        st.sidebar.error("Data Lessthan for Training Perpose")
-    
+    with sidebar:
+        with st.spinner("Please Wait! Model are Train On new data..."):
+            st.sidebar.info("Please Wait! Model are Train new Data....  ")
+        
+            for name in folders:
+                for img in os.listdir(os.path.join(BASE_DIR,name)):
+                    img_path = os.path.join(BASE_DIR,name,img)
+                    img = cv2.imread(img_path)
+                    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                    if gray_img is not None:
+                        X.append(gray_img.flatten() / 255.0)
+                        y.append(name)
+        
+            if len(X) > 0:
+                pca = PCA(.9999)
+                X_pca = pca.fit_transform(X)
+        
+                model = LogisticRegression(max_iter=1000)
+                model.fit(X_pca, y)
+        
+                joblib.dump(pca, "pca_model.pkl")
+                joblib.dump(model, "lr_model.pkl")
+                st.success(" Model Trained SuccessFully!")   
+            else:
+                st.sidebar.error("Data Lessthan for Training Perpose")
+            
 
 def load_models():
     try:
@@ -158,7 +236,7 @@ def load_models():
     
 def dashboard():
     conn = sqlite3.connect("attendance.db")
-    df = pd.read_sql("SELECT COUNT(*) as count FROM attendance_records WHERE date=DATE('now')", conn)
+    df = pd.read_sql("SELECT COUNT(*) as count FROM attendance_records WHERE date=DATE('now', 'localtime')", conn)
     if len(df) > 0:
         return df['count'][0]
     return 0
@@ -184,6 +262,9 @@ if st.session_state.logged_in:
 
     if st.sidebar.button("📸Mark Attendance"):
         st.session_state.page = "Attendance"
+
+    if st.sidebar.button("👤Total Students"):
+        st.session_state.page = "TotalStudents"
 
     if st.sidebar.button("🚪Logout"):
             st.session_state.logged_in = False
@@ -214,12 +295,10 @@ if st.session_state.logged_in:
         df = pd.read_sql("""
         SELECT student_name, time, date 
         FROM attendance_records 
-        where date = DATE('now')
+        where date = DATE('now', 'localtime)
         ORDER BY id DESC 
         LIMIT 5
         """, conn)
-        df['time'] = df['time'].astype(str).map(lambda x: x.split()[-1])
-        df['time'] = pd.to_datetime(df['time'].astype(str)).dt.strftime('%I:%M%p')
         st.table(df)
         st.markdown("---")
         st.warning("⚠️ Data resets on cloud restart")
@@ -227,9 +306,8 @@ if st.session_state.logged_in:
     elif st.session_state.page == "AddStudent":
         st.title("👤REGISTRATION NEW STUDENT")
 
-        name_input = st.text_input("Enter Student Name")
+        name_input = st.text_input("Enter Student Name").capitalize()
         camera_img = st.camera_input("Take Photo!")
-
         if camera_img is not None and name_input:
             file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
             frame = cv2.imdecode(file_bytes, 1)
@@ -237,21 +315,38 @@ if st.session_state.logged_in:
             face_model=cv2.CascadeClassifier(HAAR_FILE)
             gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             faces = face_model.detectMultiScale(gray, 1.3, 5)
+            with st.form("add_student_detail", clear_on_submit=True):
+            name_input = st.text_input("Enter Student Name")
+            name_input = name_input.capitalize()
+            camera_img = st.camera_input("Take Photo!")
+            if camera_img is not None and name_input:
+                    file_bytes = np.asarray(bytearray(camera_img.read()), dtype=np.uint8)
+                    frame = cv2.imdecode(file_bytes, 1)
+                    face_model=cv2.CascadeClassifier(HAAR_FILE)
+                    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+                    faces = face_model.detectMultiScale(gray,minNeighbors=10,scaleFactor=1.1)
+                    if len(faces) > 0:
+                        for (x,y,w,h) in faces:
+                            face_img = frame[y:y+h,x:x+w]
+                            face_img = cv2.resize(face_img,(200,200))        
+                    else:
+                        st.warning("Face Not Detect! Please Try Again...")
 
-            if len(faces) > 0:
-                #st.image(frame, channels="BGR", width=300, caption="Face Detected")
-                if st.button("Save Data"):
-                    save_data(name_input, frame, faces)
-
+            elif camera_img is not None and not name_input:
+                st.warning("Enter Student Name!")
             else:
-                st.warning("Face Not Detect! Please Try Again...")
+                st.info("Please enter a Student Name and Take a Photo!")
 
-        elif camera_img is not None and not name_input:
-            st.warning("Enter Student Name!")
-        else:
-            st.info("Please enter a Student Name and Take a Photo!")
-
-            
+            submitted = st.form_submit_button("Save Data")
+            if submitted:
+                st.image(face_img, channels="BGR", width=300, caption="Face Detected")
+                save_data(name_input, frame, faces)
+                stu_info(name_input)
+                st.toast(f"{name_input} added 🎉")
+                st.balloons()
+                time.sleep(5)
+                st.rerun()
+         
     elif st.session_state.page == "Attendance":
         st.title("👤ATTENDANCE RECOGNITION")
         pca, model = load_models()
@@ -302,10 +397,57 @@ if st.session_state.logged_in:
                             st.success(f"Date: {current_date}") 
                             st.success(f"Time: {current_time}")
                             st.image(face_img, caption=name, width=150)
+                            time.sleep(5)
+                            st.rerun()
                         else:
                             st.error("Unknown Person")
                 else: 
-                    st.warning("Face not Detect! Please Try Again...")    
+                    st.warning("Face not Detect! Please Try Again...")   
+
+    elif st.session_state.page == "TotalStudents":
+        st.title("📋Total Student Register")
+        st.subheader("Student Information")
+        conn = sqlite3.connect("attendance_db")
+        df = pd.read_sql("""SELECT * FROM students_info""",conn)
+        col1, col2, col3 = st.columns([1, 3, 1])
+        with col1:
+            id = st.text_input("Stu_Id")
+            
+        with col2:
+            name = st.text_input("Enter student name")
+            name = name.capitalize()
+        with col3:
+            if st.button("❌Delete"):
+                if name.strip() == "" or id.strip() == "":
+                    st.warning("Please enter both Name or Id before click Delete!" )
+                else:
+                    result =delete_student(id,name)
+                    if result:
+                        st.success(f"Successfully deleted {name} ")
+                        st.rerun()
+                    else:
+                        st.error("No student found with this ID/Name")
+    
+        
+        if not df.empty:
+            df.insert(0,'S.No',range(1,1+len(df)))
+
+            df['S.No'] = df['S.No'].astype(str)
+            df['id'] = df['id'].astype(str)
+            st.dataframe(df,hide_index=True)
+
+        # 🔥 CSV Download Button
+            csv = df.to_csv(index=False).encode('utf-8')
+
+            st.download_button(
+                label="📥 Download as CSV (Excel)",
+                data=csv,
+                file_name="students_data.csv",
+                mime="text/csv",
+            )
+
+        else:
+            st.warning("No student data found!")
 else:
     login_page()
         
