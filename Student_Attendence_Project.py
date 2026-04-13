@@ -85,7 +85,7 @@ def login_page():
 
 
 def init_db():
-    conn = sqlite3.connect("attendance.db")
+    conn = sqlite3.connect("attendance_db")
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -110,7 +110,7 @@ init_db()
 
 def save_attendance_to_db(name, date, time):
     try:
-        conn = sqlite3.connect("attendance.db")
+        conn = sqlite3.connect("attendance_db")
         cursor = conn.cursor()
 
         check_query = "SELECT * FROM attendance_records WHERE student_name = ? AND date = ?"
@@ -235,7 +235,7 @@ def load_models():
         return None, None
     
 def dashboard():
-    conn = sqlite3.connect("attendance.db")
+    conn = sqlite3.connect("attendance_db")
     df = pd.read_sql("SELECT COUNT(*) as count FROM attendance_records WHERE date=DATE('now', 'localtime')", conn)
     if len(df) > 0:
         return df['count'][0]
@@ -291,7 +291,7 @@ if st.session_state.logged_in:
             st.metric(label="Student Status", value="Ready",delta="normal")
 
         st.subheader(" RECENT ATTENDANCE")
-        conn = sqlite3.connect("attendance.db")
+        conn = sqlite3.connect("attendance_db")
         df = pd.read_sql("""
         SELECT student_name, time, date 
         FROM attendance_records 
@@ -423,6 +423,7 @@ if st.session_state.logged_in:
         conn = sqlite3.connect("attendance_db")
         df = pd.read_sql("""SELECT * FROM students_info""",conn)
         col1, col2, col3 = st.columns([1, 3, 1])
+        
         with col1:
             id = st.text_input("Stu_Id")
             
