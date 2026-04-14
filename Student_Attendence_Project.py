@@ -201,7 +201,7 @@ def train_system():
         return
     if len(folders) >= 2:
         with st.sidebar:
-            with st.spinner("Please Wait Model are Train New Data")
+            with st.spinner("Please Wait Model are Train New Data"):
                 for name in folders:
                     for img in os.listdir(os.path.join(BASE_DIR,name)):
                         img_path = os.path.join(BASE_DIR,name,img)
