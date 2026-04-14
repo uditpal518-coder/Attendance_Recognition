@@ -200,6 +200,8 @@ def train_system():
         st.sidebar.error("Do not have any folder for Training")
         return
     if len(folders) >= 2:
+        placeholder=st.empty()
+        placeholder.success("Please Wait! Model are Training mode...")
         for name in folders:
             for img in os.listdir(os.path.join(BASE_DIR,name)):
                 img_path = os.path.join(BASE_DIR,name,img)
@@ -218,7 +220,7 @@ def train_system():
 
             joblib.dump(pca, "pca_model.pkl")
             joblib.dump(model, "lr_model.pkl")
-            st.success("Model are Train Successfully!...")
+            placeholder.success("Model are Train Successfully!...")
         else:
             st.error("Data Lessthan for Training Perpose")
     else: 
@@ -270,9 +272,7 @@ if st.session_state.logged_in:
 
     st.sidebar.markdown("---")
     if st.sidebar.button("⚙️System Train"):
-        st.info("Please Wait! Model are training mode..")
         train_system()
-        st.success("✅ Successfully Completed")
 
     # --- PAGE LOGIC --
     if st.session_state.page =="Home":
