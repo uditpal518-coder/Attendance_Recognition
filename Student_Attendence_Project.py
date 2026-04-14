@@ -176,7 +176,7 @@ def save_data(name, frame, faces):
     progress_bar = st.progress(0)
     status_text = st.empty()
 
-    for i in range(1,101):
+    for i in range(1,50):
         for (x,y,w,h) in faces:
             face_img = frame[y:y+h,x:x+w]
             face_img = cv2.resize(face_img,(200,200))
@@ -186,8 +186,8 @@ def save_data(name, frame, faces):
 
             cv2.imwrite(f"{path}/{name}_{i}.jpg",face_img)
 
-        progress_bar.progress(i / 100)
-        status_text.text(f"Saving Image: {i}/100")
+        progress_bar.progress(i / 50)
+        status_text.text(f"Saving Image: {i}/50")
 
     st.success(f"Successfully! ✅ {name} data save..")
 
@@ -200,32 +200,28 @@ def train_system():
         st.sidebar.error("Do not have any folder for Training")
         return
     if len(folders) >= 2:
-        with st.spinner("Please Wait! Model are Train new data..."):
-            with st.sidebar:
-            
-                for name in folders:
-                    for img in os.listdir(os.path.join(BASE_DIR,name)):
-                        img_path = os.path.join(BASE_DIR,name,img)
-                        img = cv2.imread(img_path)
-                        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                        if gray_img is not None:
-                            X.append(gray_img.flatten() / 255.0)
-                            y.append(name)
-            
-                if len(X) > 0:
-                    pca = PCA(.9999)
-                    X_pca = pca.fit_transform(X)
-            
-                    model = LogisticRegression(max_iter=1000)
-                    model.fit(X_pca, y)
-        
-                    joblib.dump(pca, "pca_model.pkl")
-                    joblib.dump(model, "lr_model.pkl")
-                    st.success(" Model Trained SuccessFully!")   
-                else:
-                    st.sidebar.error("Data Lessthan for Training Perpose")
+        for name in folders:
+            for img in os.listdir(os.path.join(BASE_DIR,name)):
+                img_path = os.path.join(BASE_DIR,name,img)
+                img = cv2.imread(img_path)
+                gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                if gray_img is not None:
+                    X.append(gray_img.flatten() / 255.0)
+                    y.append(name)
+    
+        if len(X) > 0:
+            pca = PCA(.9999)
+            X_pca = pca.fit_transform(X)
+    
+            model = LogisticRegression(max_iter=1000)
+            model.fit(X_pca, y)
+
+            joblib.dump(pca, "pca_model.pkl")
+            joblib.dump(model, "lr_model.pkl")
+        else:
+            st.sidebar.error("Data Lessthan for Training Perpose")
     else: 
-        st.sidebar.warning(" minimum two or more students data train!")
+    st.sidebar.warning(" minimum two or more students data train!")
 def load_models():
     try:
         pca = joblib.load("pca_model.pkl")
@@ -273,7 +269,9 @@ if st.session_state.logged_in:
 
     st.sidebar.markdown("---")
     if st.sidebar.button("⚙️System Train"):
-        train_system()
+        with st.spinner("Please Wait! Model are Train new data..."):
+            train_system()
+        st.success("Model Train Successfully!...")
 
     # --- PAGE LOGIC --
     if st.session_state.page =="Home":
@@ -339,8 +337,8 @@ if st.session_state.logged_in:
                             stu_info(name_input)
                             st.toast(f"{name_input} added 🎉")
                             st.balloons()
-                            time.sleep(5)
-                            st.rerun()
+                            if st.button("Refresh"):
+                                st.rerun()
                     else:
                         st.warning("Face Not Detect! Please Try Again...")
     
@@ -402,8 +400,9 @@ if st.session_state.logged_in:
                             st.success(f"Date: {current_date}") 
                             st.success(f"Time: {current_time}")
                             st.image(face_img, caption=name, width=150)
-                            time.sleep(5)
-                            st.rerun()
+                            st.balloon()
+                            if st.button("Refresh"):
+                                st.rerun()
                         else:
                             st.error("Unknown Person")
                 else: 
@@ -430,8 +429,8 @@ if st.session_state.logged_in:
                     result =delete_student(id,name)
                     if result:
                         st.success(f"Successfully deleted {name} ")
-                        time.sleep(5)
-                        st.rerun()
+                        if st.button("Refresh"):
+                            st.rerun()
                     else:
                         st.error("No student found with this ID/Name")
     
