@@ -202,7 +202,7 @@ def train_system():
             return
         if len(folders) >= 2:
             placeholder=st.empty()
-            placeholder.success("Please Wait! Model are Training mode...")
+            placeholder.info("Please Wait! Model are Training mode...")
             for name in folders:
                 for img in os.listdir(os.path.join(BASE_DIR,name)):
                     img_path = os.path.join(BASE_DIR,name,img)
