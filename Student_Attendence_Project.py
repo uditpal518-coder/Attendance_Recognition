@@ -200,28 +200,31 @@ def train_system():
         st.sidebar.error("Do not have any folder for Training")
         return
     if len(folders) >= 2:
-        for name in folders:
-            for img in os.listdir(os.path.join(BASE_DIR,name)):
-                img_path = os.path.join(BASE_DIR,name,img)
-                img = cv2.imread(img_path)
-                gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                if gray_img is not None:
-                    X.append(gray_img.flatten() / 255.0)
-                    y.append(name)
-    
-        if len(X) > 0:
-            pca = PCA(.9999)
-            X_pca = pca.fit_transform(X)
-    
-            model = LogisticRegression(max_iter=1000)
-            model.fit(X_pca, y)
-
-            joblib.dump(pca, "pca_model.pkl")
-            joblib.dump(model, "lr_model.pkl")
-        else:
-            st.sidebar.error("Data Lessthan for Training Perpose")
-    else: 
-        st.sidebar.warning(" minimum two or more students data train!")
+        with st.sidebar:
+            with st.spinner("Please Wait Model are Train New Data")
+                for name in folders:
+                    for img in os.listdir(os.path.join(BASE_DIR,name)):
+                        img_path = os.path.join(BASE_DIR,name,img)
+                        img = cv2.imread(img_path)
+                        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                        if gray_img is not None:
+                            X.append(gray_img.flatten() / 255.0)
+                            y.append(name)
+            
+                if len(X) > 0:
+                    pca = PCA(.9999)
+                    X_pca = pca.fit_transform(X)
+            
+                    model = LogisticRegression(max_iter=1000)
+                    model.fit(X_pca, y)
+        
+                    joblib.dump(pca, "pca_model.pkl")
+                    joblib.dump(model, "lr_model.pkl")
+                    st.success("Model are Train Successfully!...")
+                else:
+                    st..error("Data Lessthan for Training Perpose")
+            else: 
+                st.sidebar.warning(" minimum two or more students data train!")
 def load_models():
     try:
         pca = joblib.load("pca_model.pkl")
@@ -269,9 +272,7 @@ if st.session_state.logged_in:
 
     st.sidebar.markdown("---")
     if st.sidebar.button("⚙️System Train"):
-        with st.spinner("Please Wait! Model are Train new data..."):
-            train_system()
-        st.success("Model Train Successfully!...")
+        train_system()
 
     # --- PAGE LOGIC --
     if st.session_state.page =="Home":
