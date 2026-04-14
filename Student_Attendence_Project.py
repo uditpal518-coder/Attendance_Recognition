@@ -270,12 +270,9 @@ if st.session_state.logged_in:
 
     st.sidebar.markdown("---")
     if st.sidebar.button("⚙️System Train"):
-        st.session_state.train = True
-    if "train" in st.session_state and st.session_state.train:
-        with st.spinner("⏳ Training model... please wait"):
+        st.info("Please Wait! Model are training mode..")
             train_system()
-        st.success("✅ Training Completed")
-        st.session_state.train = False
+        st.success("✅ Successfully Completed")
 
     # --- PAGE LOGIC --
     if st.session_state.page =="Home":
