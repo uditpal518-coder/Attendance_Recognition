@@ -369,7 +369,7 @@ if st.session_state.logged_in:
                 if len(faces) > 0:
                     for (x,y,w,h) in faces:
                         face_img = frame[y:y+h, x:x+w]
-                        face_img = cv2.resize(face_img, (200, 200))
+                        face_img = cv2.resize(face_img, (100, 100))
                         gray_face = cv2.cvtColor(face_img, cv2.COLOR_BGR2GRAY)
 
                         flat_img = gray_face.flatten().astype('float32') / 255.0
@@ -379,7 +379,7 @@ if st.session_state.logged_in:
                         predicted_class = model.classes_[np.argmax(probs)]
 
                         confidence = max_prob * 100
-                        if confidence >= 97:
+                        if confidence >= 95:
                             name = predicted_class
                         else:
                             name = "Unknown"
