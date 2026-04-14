@@ -176,10 +176,10 @@ def save_data(name, frame, faces):
     progress_bar = st.progress(0)
     status_text = st.empty()
 
-    for i in range(1,50):
+    for i in range(1,51):
         for (x,y,w,h) in faces:
             face_img = frame[y:y+h,x:x+w]
-            face_img = cv2.resize(face_img,(200,200))
+            face_img = cv2.resize(face_img,(100,100))
 
             brightness = random.uniform(0.8, 1.2)
             face_img = cv2.convertScaleAbs(face_img, alpha=brightness, beta=0)
@@ -332,7 +332,7 @@ if st.session_state.logged_in:
                     if len(faces) > 0:
                         for (x,y,w,h) in faces:
                             face_img = frame[y:y+h,x:x+w]
-                            face_img = cv2.resize(face_img,(200,200))   
+                            face_img = cv2.resize(face_img,(100,100))   
                             st.image(face_img, channels="BGR", width=300, caption="Face Detected") 
                             save_data(name_input, frame, faces)
                             stu_info(name_input)
