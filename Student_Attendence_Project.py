@@ -341,8 +341,6 @@ if st.session_state.logged_in:
                             stu_info(name_input)
                             st.toast(f"{name_input} added 🎉")
                             st.balloons()
-                            if st.button("Refresh"):
-                                st.rerun()
                     else:
                         st.warning("Face Not Detect! Please Try Again...")
     
@@ -405,8 +403,6 @@ if st.session_state.logged_in:
                             st.success(f"Time: {current_time}")
                             st.image(face_img, caption=name, width=150)
                             st.balloon()
-                            if st.button("Refresh"):
-                                st.rerun()
                         else:
                             st.error("Unknown Person")
                 else: 
@@ -433,8 +429,6 @@ if st.session_state.logged_in:
                     result =delete_student(id,name)
                     if result:
                         st.success(f"Successfully deleted {name} ")
-                        if st.button("Refresh"):
-                            st.rerun()
                     else:
                         st.error("No student found with this ID/Name")
     
