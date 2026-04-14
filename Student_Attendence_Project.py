@@ -222,7 +222,7 @@ def train_system():
                     joblib.dump(model, "lr_model.pkl")
                     st.success("Model are Train Successfully!...")
                 else:
-                    st..error("Data Lessthan for Training Perpose")
+                    st.error("Data Lessthan for Training Perpose")
             else: 
                 st.sidebar.warning(" minimum two or more students data train!")
 def load_models():
