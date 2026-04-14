@@ -212,7 +212,7 @@ def train_system():
                             y.append(name)
             
                 if len(X) > 0:
-                    pca = PCA(.9999)
+                    pca = PCA(0.95)
                     X_pca = pca.fit_transform(X)
             
                     model = LogisticRegression(max_iter=1000)
