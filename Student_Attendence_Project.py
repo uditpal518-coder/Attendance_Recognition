@@ -271,7 +271,7 @@ if st.session_state.logged_in:
     st.sidebar.markdown("---")
     if st.sidebar.button("⚙️System Train"):
         st.info("Please Wait! Model are training mode..")
-            train_system()
+        train_system()
         st.success("✅ Successfully Completed")
 
     # --- PAGE LOGIC --
