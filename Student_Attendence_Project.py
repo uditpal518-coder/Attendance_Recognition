@@ -10,6 +10,7 @@ import pytz
 import time
 import shutil
 import sqlite3
+import gc
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 
