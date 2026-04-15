@@ -160,7 +160,7 @@ def save_data(name, frame, faces):
     progress_bar = st.progress(0)
     status_text = st.empty()
 
-    for i in range(16):
+    for i in range(1,51):
         for (x,y,w,h) in faces:
             face_img = frame[y:y+h,x:x+w]
             face_img = cv2.resize(face_img,(100,100))
@@ -170,8 +170,8 @@ def save_data(name, frame, faces):
 
             cv2.imwrite(f"{path}/{name}_{i}.jpg",face_img)
 
-        progress_bar.progress(i / 15)
-        status_text.text(f"Saving Image: {i}/15")
+        progress_bar.progress(i / 50)
+        status_text.text(f"Saving Image: {i}/50")
         time.sleep(0.05)
 
     st.success(f"Successfully! ✅ {name} data save..")
@@ -245,10 +245,6 @@ def login_page():
 
                 else:
                     st.error("Invalid username and password")
-
-if not st.session_state.logged_in:
-    login_page()
-    st.stop()
 
 
 # --- SIDEBAR NAVIGATION ---
@@ -452,6 +448,9 @@ if st.session_state.logged_in:
 
         else:
             st.warning("No student data found!")
+
+else:
+    login_page()
         
 
 
