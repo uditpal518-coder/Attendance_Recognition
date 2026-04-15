@@ -192,8 +192,8 @@ def train_system():
                 for img in os.listdir(os.path.join(BASE_DIR,name)):
                     img_path = os.path.join(BASE_DIR,name,img)
                     img = cv2.imread(img_path)
-                    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                    if gray_img is not None:
+                    if img is not None:
+                        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                         X.append(gray_img.flatten() / 255.0)
                         y.append(name)
         
