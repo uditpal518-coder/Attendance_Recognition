@@ -317,7 +317,7 @@ if st.session_state.logged_in:
         
         st.warning("⚠️ Data resets on cloud restart")
 
-    elif st.session_state.page == "AddStudent":
+    elif st.session_state.page == 1:
         st.title("👤REGISTRATION NEW STUDENT")
         with st.form("add_student_detail", clear_on_submit=True):
             name_input = st.text_input("Enter Student Name").capitalize()
