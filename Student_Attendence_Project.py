@@ -266,7 +266,6 @@ if st.session_state.logged_in:
 
     if st.sidebar.button("🚪Logout"):
             st.session_state.logged_in = False
-            st.rerun()
 
 
     st.sidebar.markdown("---")
@@ -398,7 +397,7 @@ if st.session_state.logged_in:
                             st.success(f"Date: {current_date}") 
                             st.success(f"Time: {current_time}")
                             st.image(face_img, caption=name, width=150)
-                            st.balloon()
+                            st.balloons()
                         else:
                             st.error("Unknown Person")
                 else: 
