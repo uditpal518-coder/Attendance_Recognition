@@ -220,10 +220,13 @@ def train_system():
                 joblib.dump(pca, "pca_model.pkl")
                 joblib.dump(model, "lr_model.pkl")
                 placeholder.success("Successfully! Model are Train ...")
+                del X, y, X_pca, pca, model
+                gc.collect()
             else:
                 st.error("Data Lessthan for Training Perpose")
         else: 
             st.warning(" minimum two or more students data train!")
+#@st.cache.resource
 def load_models():
     try:
         pca = joblib.load("pca_model.pkl")
