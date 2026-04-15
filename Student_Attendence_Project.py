@@ -66,11 +66,6 @@ if 'logged_in' not in  st.session_state:
 if 'page' not in st.session_state:
     st.session_state.page = "Home"
 
-if "camera_key" not in st.session_state:
-    st.session_state.camera_key = 1
-
-
-
 def login_page():
     col1,col2,col3 = st.columns([1,2,1])
     with col2:
@@ -324,7 +319,7 @@ if st.session_state.logged_in:
         st.title("👤REGISTRATION NEW STUDENT")
         with st.form("add_student_detail", clear_on_submit=True):
             name_input = st.text_input("Enter Student Name").capitalize()
-            camera_img = st.camera_input("Take Photo!", key=f"camera_{st.session_state.camera_key}")
+            camera_img = st.camera_input("Take Photo!")
             submitted = st.form_submit_button("Save Data")
             if submitted:
                 if camera_img is not None and name_input != "":
@@ -342,7 +337,6 @@ if st.session_state.logged_in:
                             stu_info(name_input)
                             st.toast(f"{name_input} added 🎉")
                             st.balloons()
-                            st.session_state.camera_key +=1
                     else:
                         st.warning("Face Not Detect! Please Try Again...")
     
