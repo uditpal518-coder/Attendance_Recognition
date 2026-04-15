@@ -82,7 +82,7 @@ def login_page():
 
 
 def init_db():
-    conn = sqlite3.connect("attendance_db")
+    conn = sqlite3.connect("attendance_db.db")
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -107,7 +107,7 @@ init_db()
 
 def save_attendance_to_db(name, date, time):
     try:
-        conn = sqlite3.connect("attendance_db")
+        conn = sqlite3.connect("attendance_db.db")
         cursor = conn.cursor()
 
         check_query = "SELECT * FROM attendance_records WHERE student_name = ? AND date = ?"
@@ -130,7 +130,7 @@ def save_attendance_to_db(name, date, time):
 
 def stu_info(name):
     try:
-        conn = sqlite3.connect("attendance_db")
+        conn = sqlite3.connect("attendance_db.db")
         cursor = conn.cursor()
         query = "INSERT INTO students_info (Student_name) VALUES (?)"
         cursor.execute(query,(name,))
@@ -143,7 +143,7 @@ def stu_info(name):
 
 def delete_student(student_id, student_name):
     try:
-        conn = sqlite3.connect("attendance_db")
+        conn = sqlite3.connect("attendance_db.db")
         cursor = conn.cursor()
 
         # Delete from database
@@ -233,7 +233,7 @@ def load_models():
         return None, None
     
 def dashboard():
-    conn = sqlite3.connect("attendance_db")
+    conn = sqlite3.connect("attendance_db.db")
     df = pd.read_sql("SELECT COUNT(*) as count FROM attendance_records WHERE date=DATE('now', 'localtime')", conn)
     if len(df) > 0:
         return df['count'][0]
@@ -289,7 +289,7 @@ if st.session_state.logged_in:
             st.metric(label="Student Status", value="Ready",delta="normal")
 
         st.subheader(" RECENT ATTENDANCE")
-        conn = sqlite3.connect("attendance_db")
+        conn = sqlite3.connect("attendance_db.db")
         df = pd.read_sql("""
         SELECT student_name, time, date 
         FROM attendance_records 
@@ -407,7 +407,7 @@ if st.session_state.logged_in:
     elif st.session_state.page == "TotalStudents":
         st.title("📋Total Student Register")
         st.subheader("Student Information")
-        conn = sqlite3.connect("attendance_db")
+        conn = sqlite3.connect("attendance_db.db")
         df = pd.read_sql("""SELECT * FROM students_info""",conn)
         col1, col2, col3 = st.columns([1, 3, 1])
         
