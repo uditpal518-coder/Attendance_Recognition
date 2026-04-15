@@ -265,7 +265,7 @@ if st.session_state.logged_in:
         st.session_state.page = "TotalStudents"
 
     if st.sidebar.button("🚪Logout"):
-            st.session_state.logged_in = False
+        st.session_state.logged_in = False
 
 
     st.sidebar.markdown("---")
