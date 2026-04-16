@@ -18,10 +18,10 @@ st.set_page_config(layout='wide', page_title="Smart Attendance System", page_ico
 
 st.markdown("""
 <style>
-/* Background 
+/* Background */
 .stApp {
     background: linear-gradient(to right, #1f4037, #99f2c8);
-}*/
+}
 
 /* Titles */
 h1, h2, h3 {
@@ -233,18 +233,39 @@ def dashboard_total():
     return count
     
 def login_page():
-    col1,col2,col3 = st.columns([1,2,1])
+    col1, col2, col3 = st.columns([2,2,2])
+
     with col2:
-        if not st.session_state.logged_in:
-            st.title("👤Admin Login")
-            username = st.text_input("Username")
-            password = st.text_input("Password", type="password")
-            if st.button("🔐Login"):
+        st.markdown("<h1 style='text-align:center;'>🔐 Welcome</h1>", unsafe_allow_html=True)
+
+        choice = st.radio("Select Option", ["Login", "Sign Up"], horizontal=True)
+
+        # ---------------- LOGIN ----------------
+        if choice == "Login":
+            st.subheader("👤 Login")
+
+            username = st.text_input("Username", key="login_user")
+            password = st.text_input("Password", type="password", key="login_pass")
+
+            if st.button("🔐 Login"):
                 if username == "admin" and password == "123":
                     st.session_state.logged_in = True
-
+                    st.success("Login Successful 🎉")
                 else:
-                    st.error("Invalid username and password")
+                    st.error("Invalid Username or Password")
+
+        # ---------------- SIGN UP ----------------
+        elif choice == "Sign Up":
+            st.subheader("📝 Create Account")
+
+            gmail = st.text_input("Gmail", key="signup_mail")
+            password = st.text_input("Password", type="password", key="signup_pass")
+
+            if st.button("🚀 Sign Up"):
+                if gmail.strip() == "" or password.strip() == "":
+                    st.warning("Please fill all fields")
+                else:
+                    st.success("Account Created Successfully 🎉")
 
 
 # --- SIDEBAR NAVIGATION ---
