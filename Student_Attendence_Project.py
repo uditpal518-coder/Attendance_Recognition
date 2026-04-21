@@ -265,8 +265,17 @@ def login_page():
             if st.button("🚀 Sign Up"):
                 if gmail.strip() == "" or password.strip() == "":
                     st.warning("Please fill all fields")
-                else:
-                    st.success("Account Created Successfully 🎉")
+                elif gmail.strip() != "" and password.strip() != "":
+                    otp = random.randint(1000,9999)
+                    st.toast(f"Your OTP {otp}")
+                    OTP = st.text_input("enter otp number",placeholder="4-digits")
+                    if otp == OTP:
+                        st.success("OTP Verified!")
+                        user_name = st.text_input("User_id",placeholder="create user name")
+                        password = st.text_input("Password",placeholder="create password",type="password")
+                        
+                    else:
+                        st.error("Invalid OTP")
                     # st.rerun()
 
 
