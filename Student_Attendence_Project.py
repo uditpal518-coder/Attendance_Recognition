@@ -119,7 +119,7 @@ def stu_info(name):
     try:
         conn = sqlite3.connect("attendance_db.db")
         cursor = conn.cursor()
-        query = "INSERT INTO students_info (Student_name) VALUES (?)"
+        query = "INSERT INTO students_info (student_name) VALUES (?)"
         cursor.execute(query,(name,))
         conn.commit()
         conn.close()
