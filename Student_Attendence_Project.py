@@ -259,7 +259,7 @@ def login_page():
         elif choice == "Sign Up":
             st.subheader("📝 Create Account")
 
-            user_name = st.text_input("Gmail", key="signup_mail")
+            user_name = st.text_input("User_name", key="signup_mail")
             password = st.text_input("Password", type="password", key="signup_pass")
 
             if st.button("🚀 Sign Up"):
