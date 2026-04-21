@@ -259,22 +259,15 @@ def login_page():
         elif choice == "Sign Up":
             st.subheader("📝 Create Account")
 
-            gmail = st.text_input("Gmail", key="signup_mail")
+            user_name = st.text_input("Gmail", key="signup_mail")
             password = st.text_input("Password", type="password", key="signup_pass")
 
             if st.button("🚀 Sign Up"):
-                if gmail.strip() == "" or password.strip() == "":
+                if user_name.strip() == "" or password.strip() == "":
                     st.warning("Please fill all fields")
-                elif gmail.strip() != "" and password.strip() != "":
-                    otp = random.randint(1000,9999)
-                    st.toast(f"Your OTP {otp}")
-                    OTP = st.text_input("enter otp number",placeholder="4-digits")
-                    if otp == OTP:
-                        st.success("Account create Successfully!")
-                        st.rerun()
-                        
-                    else:
-                        st.error("Invalid OTP")
+                else:
+                    st.success("Account create Successfully!")
+                    st.rerun()
                      
 
 
