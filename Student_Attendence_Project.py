@@ -55,7 +55,7 @@ h1, h2, h3 {
 
 BASE_DIR = "students"
 os.makedirs(BASE_DIR, exist_ok=True)
-HAAR_FILE = "haarcascade_frontalface_default.xml"
+HAAR_FILE = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 
 
 
@@ -229,8 +229,10 @@ def dashboard():
 
 def dashboard_total():
     folders = [folder_name for folder_name in os.listdir(BASE_DIR) if os.path.isdir(os.path.join(BASE_DIR, folder_name))]
-    count = len(folders)
-    return count
+    if len(folders)>0:
+        return len(folders)
+    else:
+        return 0
     
 def login_page():
     col1, col2, col3 = st.columns([2,2,2])
