@@ -435,7 +435,7 @@ if st.session_state.logged_in:
                         if name != "Unknown":
                             now = datetime.now(pytz.timezone('Asia/Kolkata'))
                             current_date = now.strftime("%Y-%m-%d")
-                            current_time = now.strftime("%H:%M:%S")
+                            current_time = now.strftime("%I:%M:%S %p")
 
                             if save_attendance_to_db(name, current_date, current_time):
                                 st.success(f"✅ {name} Marked Present!")
