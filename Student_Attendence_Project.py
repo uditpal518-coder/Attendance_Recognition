@@ -251,7 +251,7 @@ def login_page():
                 if username == "admin" and password == "123":
                     st.session_state.logged_in = True
                     st.success("Login Successful 🎉")
-                    st.rerun()
+                    # st.rerun()
                 else:
                     st.error("Invalid Username or Password")
 
@@ -267,7 +267,7 @@ def login_page():
                     st.warning("Please fill all fields")
                 else:
                     st.success("Account Created Successfully 🎉")
-                    st.rerun()
+                    # st.rerun()
 
 
 # --- SIDEBAR NAVIGATION ---
