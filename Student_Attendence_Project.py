@@ -251,7 +251,7 @@ def login_page():
                 if username == "admin" and password == "123":
                     st.session_state.logged_in = True
                     st.success("Login Successful 🎉")
-                    # st.rerun()
+                    st.rerun()
                 else:
                     st.error("Invalid Username or Password")
 
@@ -270,13 +270,12 @@ def login_page():
                     st.toast(f"Your OTP {otp}")
                     OTP = st.text_input("enter otp number",placeholder="4-digits")
                     if otp == OTP:
-                        st.success("OTP Verified!")
-                        user_name = st.text_input("User_id",placeholder="create user name")
-                        password = st.text_input("Password",placeholder="create password",type="password")
+                        st.success("Account create Successfully!")
+                        st.rerun()
                         
                     else:
                         st.error("Invalid OTP")
-                    # st.rerun()
+                     
 
 
 # --- SIDEBAR NAVIGATION ---
