@@ -123,7 +123,7 @@ def users_info(name):
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM users_info WHERE user_name = ?,
+            "SELECT * FROM users_info WHERE user_name = ?",
             (name,)
         )
         if cursor.fetchone():
