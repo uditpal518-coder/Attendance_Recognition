@@ -61,7 +61,7 @@ if 'page' not in st.session_state:
 
 def get_connection():
     """Single reusable connection helper."""
-    return sqlite3.connect("attendance_db.db", check_same_thread=False)
+    return sqlite3.connect("attendance.db", check_same_thread=False)
 
 
 def init_db():
@@ -79,6 +79,14 @@ def init_db():
         CREATE TABLE IF NOT EXISTS students_info (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             student_name TEXT
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users_info (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_name TEXT
+            password TEXT
         )
     """)
     conn.commit()
@@ -102,6 +110,28 @@ def save_attendance_to_db(name, date, time_str):
         cursor.execute(
             "INSERT INTO attendance_records (student_name, date, time) VALUES (?, ?, ?)",
             (name, date, time_str)
+        )
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        st.error(f"Database Error: {e}")
+        return False
+
+def users_info(name):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM users_info WHERE user_name = ?,
+            (name,)
+        )
+        if cursor.fetchone():
+            conn.close()
+            return False
+        cursor.execute(
+            "INSERT INTO users_info (user_name) VALUES (?, ?, ?)",
+            (name,)
         )
         conn.commit()
         conn.close()
@@ -293,6 +323,7 @@ def login_page():
                 if user_name.strip() == "" or password.strip() == "":
                     st.warning("Please fill all fields")
                 else:
+                    users_info(user_name)
                     st.success("Account created successfully!")
 
 
@@ -466,6 +497,7 @@ if st.session_state.logged_in:
         with col1:
             stu_id = st.text_input("Student ID")
         with col2:
+            
             stu_name = st.text_input("Student Name")
             stu_name = stu_name.capitalize()
         with col3:
