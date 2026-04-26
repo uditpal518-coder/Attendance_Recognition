@@ -53,6 +53,9 @@ if 'logged_in' not in st.session_state:
 if 'page' not in st.session_state:
     st.session_state.page = "Home"
 
+if 'username' not in st.session_state:
+    st.session_state.username = ""
+
 
 def get_connection():
     """Single reusable connection helper."""
@@ -306,6 +309,7 @@ def login_page():
                 log = login_user(username,password)
                 if log:
                     st.session_state.logged_in = True
+                    st.session_state.username = username
                     st.rerun()   
                 else:
                     st.error("Incorrect Username or Password")
@@ -341,7 +345,7 @@ if st.session_state.logged_in:
         st.session_state.page = "TotalStudents"
     if st.sidebar.button("🚪 Logout"):
         st.session_state.logged_in = False
-        st.rerun()  # ✅ rerun so logout takes effect
+        st.rerun()  
 
     st.sidebar.markdown("---")
     if st.sidebar.button("⚙️ System Train"):
