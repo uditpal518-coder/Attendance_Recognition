@@ -122,30 +122,24 @@ def users_info(name,password):
     except sqlite3.IntegrityError:
         return False
 
-def login_user(name,password):
+def login_user(name,password): 
     try:
-        with sqlite3.connect('attendance.db') as conn:
-            cursor = conn.cursor()
-            cursor.execute(
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
             "SELECT * FROM users_info WHERE user_name = ? and password = ?",
             (name,password)
         )
-        conn.commit()
-        return True
-    except sqlite3.IntegrityError:
+        data = cursor.fetchone()
+        conn.close()
+
+        if data:
+            return True
+        else:
+            return False
+    except Exception as e:
+        st.error(f"Database Error: {e}")
         return False
-    # try:
-    #     conn = get_connection()
-    #     cursor = conn.cursor()
-    #     cursor.execute(
-    #         "SELECT * FROM users_info WHERE user_name = ? and password = ?",
-    #         (name,password)
-    #     )
-    #     conn.commit()
-    #     return True
-    # except Exception as e:
-    #     st.error(f"Database Error: {e}")
-    #     return False
     
 def stu_info(name):
     try:
