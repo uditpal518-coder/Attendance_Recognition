@@ -127,7 +127,7 @@ def login_user(name,password):
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM users_info WHERE user_name = ? and password = ?",
+            "SELECT * FROM users WHERE user_name = ? and password = ?",
             (name,password)
         )
         data = cursor.fetchone()
@@ -288,7 +288,7 @@ def login_page():
     col1, col2, col3 = st.columns([2, 2, 2])
     with col1:
         conn = get_connection()
-        df = pd.read_sql("SELECT * FROM users_info", conn)
+        df = pd.read_sql("SELECT * FROM users", conn)
         conn.close()
         st.table(df)
     with col2:
