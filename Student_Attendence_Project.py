@@ -84,8 +84,6 @@ def init_db():
         )
     """)
     conn.commit()
-    conn.close()
-
 
 init_db()
 
@@ -106,7 +104,6 @@ def save_attendance_to_db(name, date, time_str):
             (name, date, time_str)
         )
         conn.commit()
-        conn.close()
         return True
     except Exception as e:
         st.error(f"Database Error: {e}")
@@ -121,7 +118,6 @@ def users_info(name,password):
             (name,password)
         )
         conn.commit()
-        conn.close()
         return True
     except sqlite3.IntegrityError:
         return False
@@ -135,7 +131,6 @@ def login_user(name,password):
             (name,password)
         )
         conn.commit()
-        conn.close()
         return True
     except Exception as e:
         st.error(f"Database Error: {e}")
@@ -147,7 +142,6 @@ def stu_info(name):
         cursor = conn.cursor()
         cursor.execute("INSERT INTO students_info (student_name) VALUES (?)", (name,))
         conn.commit()
-        conn.close()
         return True
     except Exception as e:
         st.error(f"Database Error: {e}")
@@ -164,7 +158,6 @@ def delete_student(student_id, student_name):
         )
         deleted = cursor.rowcount
         conn.commit()
-        conn.close()
 
         if deleted == 0:
             return False
@@ -289,7 +282,8 @@ def dashboard_total():
 def login_page():
     col1, col2, col3 = st.columns([2, 2, 2])
     with col2:
-        st.markdown("<h1 style='text-align:center;'>🔐 Welcome,Student Attendance System </h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align:center;'>🔐 WelcomeStudent Attendance System </h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align:center;'>Student Attendance System </h1>", unsafe_allow_html=True)
         choice = st.radio("Select Option", ["Login", "Sign Up"], horizontal=True)
 
         if choice == "Login":
@@ -301,7 +295,6 @@ def login_page():
             if login_btn:
                 if login_user(username,password):
                     st.session_state.logged_in = True
-                    st.success("Login Successful 🎉")
                     st.rerun()   
                 else:
                     st.error("Incorrect Username or Password")
@@ -316,16 +309,12 @@ def login_page():
                 if new_user and new_password:
                     success = users_info(new_user,new_password)
                     if success:
-                        st.success("Account Create Successfully!")
+                        st.success("Account Create Successfully! 🎉")
                     else:
                         st.error("Username already exists. Please choose different one.")                
                 else:
                     st.warning("Please enter both ausername and password.") 
 
-
-# ─────────────────────────────────────────────
-# MAIN APP
-# ─────────────────────────────────────────────
 
 if st.session_state.logged_in:
 
