@@ -124,17 +124,28 @@ def users_info(name,password):
 
 def login_user(name,password):
     try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
+        with sqlite3.connect('attendance.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute(
             "SELECT * FROM users_info WHERE user_name = ? and password = ?",
             (name,password)
         )
         conn.commit()
         return True
-    except Exception as e:
-        st.error(f"Database Error: {e}")
+    except sqlite3.IntegrityError:
         return False
+    # try:
+    #     conn = get_connection()
+    #     cursor = conn.cursor()
+    #     cursor.execute(
+    #         "SELECT * FROM users_info WHERE user_name = ? and password = ?",
+    #         (name,password)
+    #     )
+    #     conn.commit()
+    #     return True
+    # except Exception as e:
+    #     st.error(f"Database Error: {e}")
+    #     return False
     
 def stu_info(name):
     try:
@@ -282,7 +293,7 @@ def dashboard_total():
 def login_page():
     col1, col2, col3 = st.columns([2, 2, 2])
     with col2:
-        st.markdown("<h1 style='text-align:center;'>🔐 WelcomeStudent Attendance System </h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align:center;'>🔐Welcome</h1>", unsafe_allow_html=True)
         st.markdown("<h1 style='text-align:center;'>Student Attendance System </h1>", unsafe_allow_html=True)
         choice = st.radio("Select Option", ["Login", "Sign Up"], horizontal=True)
 
