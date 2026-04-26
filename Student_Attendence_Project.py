@@ -13,7 +13,6 @@ import sqlite3
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 
-# --- SETTINGS ---
 st.set_page_config(layout='wide', page_title="Smart Attendance System", page_icon="🎓")
 
 st.markdown("""
@@ -55,10 +54,6 @@ if 'page' not in st.session_state:
     st.session_state.page = "Home"
 
 
-# ─────────────────────────────────────────────
-# DATABASE
-# ─────────────────────────────────────────────
-
 def get_connection():
     """Single reusable connection helper."""
     return sqlite3.connect("attendance.db", check_same_thread=False)
@@ -84,8 +79,7 @@ def init_db():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users_info (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_name TEXT
+            user_name TEXT UNIQUE,
             password TEXT
         )
     """)
@@ -118,20 +112,13 @@ def save_attendance_to_db(name, date, time_str):
         st.error(f"Database Error: {e}")
         return False
 
-def users_info(name):
+def users_info(name,password):
     try:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM users_info WHERE user_name = ?",
-            (name,)
-        )
-        if cursor.fetchone():
-            conn.close()
-            return False
-        cursor.execute(
-            "INSERT INTO users_info (user_name) VALUES (?, ?, ?)",
-            (name,)
+            "INSERT INTO users_info (user_name,password) VALUES (?,?)",
+            (name,password)
         )
         conn.commit()
         conn.close()
@@ -140,7 +127,21 @@ def users_info(name):
         st.error(f"Database Error: {e}")
         return False
 
-
+def login_user(name,password):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM users_info WHERE user_name = ? and password = ?",
+            (name,password)
+        )
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        st.error(f"Database Error: {e}")
+        return False
+    
 def stu_info(name):
     try:
         conn = get_connection()
@@ -177,10 +178,6 @@ def delete_student(student_id, student_name):
         st.error(f"Delete Error: {e}")
         return False
 
-
-# ─────────────────────────────────────────────
-# FACE DATA & TRAINING
-# ─────────────────────────────────────────────
 
 def save_data(name, frame, faces):
     path = os.path.join(BASE_DIR, name)
@@ -265,9 +262,6 @@ def load_models():
         return None, None
 
 
-# ─────────────────────────────────────────────
-# DASHBOARD HELPERS
-# ─────────────────────────────────────────────
 
 def dashboard():
     try:
@@ -293,38 +287,41 @@ def dashboard_total():
         return 0
 
 
-# ─────────────────────────────────────────────
-# LOGIN PAGE
-# ─────────────────────────────────────────────
-
 def login_page():
     col1, col2, col3 = st.columns([2, 2, 2])
     with col2:
-        st.markdown("<h1 style='text-align:center;'>🔐 Welcome</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align:center;'>🔐 Welcome,Student Attendance System </h1>", unsafe_allow_html=True)
         choice = st.radio("Select Option", ["Login", "Sign Up"], horizontal=True)
 
         if choice == "Login":
             st.subheader("👤 Login")
-            username = st.text_input("Username", key="login_user")
-            password = st.text_input("Password", type="password", key="login_pass")
-            if st.button("🔐 Login"):
-                if username == "admin" and password == "123":
+            with st.form("login_form"):
+                username = st.text_input("Username", key="login_user")
+                password = st.text_input("Password", type="password", key="login_pass")
+                login_btn = st.form_submit_button("🔐Login")
+            if login_btn:
+                if login_user(username,password):
                     st.session_state.logged_in = True
                     st.success("Login Successful 🎉")
-                    st.rerun()   # ✅ rerun added so UI updates immediately
+                    st.rerun()   
                 else:
-                    st.error("Invalid Username or Password")
+                    st.error("Incorrect Username or Password")
 
         elif choice == "Sign Up":
             st.subheader("📝 Create Account")
-            user_name = st.text_input("Username", key="signup_mail")
-            password = st.text_input("Password", type="password", key="signup_pass")
-            if st.button("🚀 Sign Up"):
-                if user_name.strip() == "" or password.strip() == "":
-                    st.warning("Please fill all fields")
+            with st.form("singup_form"):
+                new_user = st.text_input("Username", key="signup_mail")
+                new_password = st.text_input("Password", type="password", key="signup_pass")
+                submit_btn = st.form_submit_button("Sing Up")
+            if submit_btn:
+                if new_user and new_password:
+                    success = users_info(new_user,new_password)
+                    if success:
+                        st.success("Account Create Successfully!)
+                    else:
+                        st.error("Username already exists. Please choose different one.")                
                 else:
-                    users_info(user_name)
-                    st.success("Account created successfully!")
+                    st.warning("Please enter both ausername and password.") 
 
 
 # ─────────────────────────────────────────────
