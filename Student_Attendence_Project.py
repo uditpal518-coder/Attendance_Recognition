@@ -317,7 +317,7 @@ def login_page():
                 if new_user and new_password:
                     success = users_info(new_user,new_password)
                     if success:
-                        st.success("Account Create Successfully!)
+                        st.success("Account Create Successfully!")
                     else:
                         st.error("Username already exists. Please choose different one.")                
                 else:
