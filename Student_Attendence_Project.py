@@ -78,7 +78,7 @@ def init_db():
     """)
 
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users_info (
+        CREATE TABLE IF NOT EXISTS users (
             user_name TEXT UNIQUE,
             password TEXT
         )
@@ -114,17 +114,16 @@ def save_attendance_to_db(name, date, time_str):
 
 def users_info(name,password):
     try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO users_info (user_name,password) VALUES (?,?)",
+        with sqlite3.connect('attendance.db) as conn
+            cursor = conn.cursor()
+            cursor.execute(
+            "INSERT INTO users (user_name,password) VALUES (?,?)",
             (name,password)
         )
         conn.commit()
         conn.close()
         return True
-    except Exception as e:
-        st.error(f"Database Error: {e}")
+    except sqlite3.IntegrityError:
         return False
 
 def login_user(name,password):
