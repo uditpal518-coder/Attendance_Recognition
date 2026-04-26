@@ -114,7 +114,7 @@ def save_attendance_to_db(name, date, time_str):
 
 def users_info(name,password):
     try:
-        with sqlite3.connect('attendance.db') as conn
+        with sqlite3.connect('attendance.db') as conn:
             cursor = conn.cursor()
             cursor.execute(
             "INSERT INTO users (user_name,password) VALUES (?,?)",
