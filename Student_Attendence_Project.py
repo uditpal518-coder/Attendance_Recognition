@@ -304,7 +304,8 @@ def login_page():
                 password = st.text_input("Password", type="password", key="login_pass")
                 login_btn = st.form_submit_button("🔐Login")
             if login_btn:
-                if login_user(username,password):
+                log = login_user(username,password)
+                if log:
                     st.session_state.logged_in = True
                     st.rerun()   
                 else:
