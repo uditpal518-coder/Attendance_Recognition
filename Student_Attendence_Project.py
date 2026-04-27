@@ -70,13 +70,15 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             student_name TEXT,
             date TEXT,
-            time TEXT
+            time TEXT,
+            added_by TEXT
         )
     """)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS students_info (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            student_name TEXT
+            student_name TEXT,
+            added_by TEXT
         )
     """)
 
@@ -90,28 +92,6 @@ def init_db():
 
 init_db()
 
-
-def save_attendance_to_db(name, date, time_str):
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT * FROM attendance_records WHERE student_name = ? AND date = ?",
-            (name, date)
-        )
-        if cursor.fetchone():
-            conn.close()
-            return False
-        cursor.execute(
-            "INSERT INTO attendance_records (student_name, date, time) VALUES (?, ?, ?)",
-            (name, date, time_str)
-        )
-        conn.commit()
-        return True
-    except Exception as e:
-        st.error(f"Database Error: {e}")
-        return False
-
 def users_info(name,password):
     try:
         with sqlite3.connect('attendance.db') as conn:
@@ -124,7 +104,7 @@ def users_info(name,password):
         return True
     except sqlite3.IntegrityError:
         return False
-
+        
 def login_user(name,password): 
     try:
         conn = get_connection()
@@ -143,26 +123,30 @@ def login_user(name,password):
     except Exception as e:
         st.error(f"Database Error: {e}")
         return False
-    
-def stu_info(name):
+
+def user_base_dir():
+    path = os.path.join(BASE_DIR, st.session_state.username)
+    os.makedirs(path, exist_ok=True)
+    return path
+
+def stu_info(name,added_by):
     try:
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO students_info (student_name) VALUES (?)", (name,))
+        cursor.execute("INSERT INTO students_info (student_name,added_by) VALUES (?,?)", (name,added_by))
         conn.commit()
         return True
     except Exception as e:
         st.error(f"Database Error: {e}")
         return False
 
-
-def delete_student(student_id, student_name):
+def delete_student(student_id, student_name,added_by):
     try:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "DELETE FROM students_info WHERE id = ? AND student_name = ?",
-            (student_id, student_name)
+            "DELETE FROM students_info WHERE id = ? AND student_name = ? AND added_by =?",
+            (student_id, student_name, added_by)
         )
         deleted = cursor.rowcount
         conn.commit()
@@ -178,9 +162,8 @@ def delete_student(student_id, student_name):
         st.error(f"Delete Error: {e}")
         return False
 
-
 def save_data(name, frame, faces):
-    path = os.path.join(BASE_DIR, name)
+    path = os.path.join(user_base_dir(), name)
     os.makedirs(path, exist_ok=True)
 
     progress_bar = st.progress(0)
@@ -201,12 +184,34 @@ def save_data(name, frame, faces):
     st.success(f"Successfully! ✅ {name} data saved.")
 
 
+def save_attendance_to_db(name, date, time,added_by):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM attendance_records WHERE student_name = ? AND date = ? AND added_by = ?",
+            (name, date, added_by)
+        )
+        if cursor.fetchone():
+            conn.close()
+            return False
+        cursor.execute(
+            "INSERT INTO attendance_records (student_name, date, time, added_by) VALUES (?, ?, ?,?)",
+            (name, date, time,added_by)
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        st.error(f"Database Error: {e}")
+        return False
+
 def train_system():
     with st.sidebar:
         X, y = [], []
+        base = user_base_dir()
         folders = [
-            f for f in os.listdir(BASE_DIR)
-            if os.path.isdir(os.path.join(BASE_DIR, f))
+            f for f in os.listdir(base)
+            if os.path.isdir(os.path.join(base, f))
         ]
 
         if not folders:
@@ -221,7 +226,7 @@ def train_system():
         placeholder.info("Please wait! Model is training...")
 
         for name in folders:
-            for img_file in os.listdir(os.path.join(BASE_DIR, name)):
+            for img_file in os.listdir(os.path.join(base, name)):
                 img_path = os.path.join(BASE_DIR, name, img_file)
                 img = cv2.imread(img_path)
                 if img is not None:
@@ -239,23 +244,22 @@ def train_system():
         model = LogisticRegression(max_iter=1000)
         model.fit(X_pca, y)
 
-        joblib.dump(pca, "pca_model.pkl")
-        joblib.dump(model, "lr_model.pkl")
+        joblib.dump(pca, f"{st.session_state.username}_pca_model.pkl")
+        joblib.dump(model, f"{st.session_state.username}_lr_model.pkl")
 
-        # ✅ Clear cached models so next load picks up new files
         load_models.clear()
 
         placeholder.success("Model trained successfully! ✅")
 
-
-# ✅ FIX: cache_resource with better error handling
 @st.cache_resource
-def load_models():
-    if not os.path.exists("pca_model.pkl") or not os.path.exists("lr_model.pkl"):
+def load_models(username):
+    pca_path = f"{username}_pca.pkl"
+    model_path = f"{username}_lr.pkl"
+    if not os.path.exists(pca_path) or not os.path.exists(model_path):
         return None, None
     try:
-        pca = joblib.load("pca_model.pkl")
-        model = joblib.load("lr_model.pkl")
+        pca = joblib.load(pca_path)
+        model = joblib.load(model_path)
         return pca, model
     except Exception as e:
         st.error(f"Model loading error: {e}")
@@ -267,8 +271,8 @@ def dashboard():
     try:
         conn = get_connection()
         df = pd.read_sql(
-            "SELECT COUNT(*) as count FROM attendance_records WHERE date=DATE('now', 'localtime')",
-            conn
+            "SELECT COUNT(*) as count FROM attendance_records WHERE date=DATE('now', 'localtime') AND added_by =?",
+            conn,params=(st.session_state.username,)
         )
         conn.close()
         return int(df['count'][0]) if len(df) > 0 else 0
@@ -278,11 +282,14 @@ def dashboard():
 
 def dashboard_total():
     try:
-        folders = [
-            f for f in os.listdir(BASE_DIR)
-            if os.path.isdir(os.path.join(BASE_DIR, f))
-        ]
-        return len(folders)
+        conn = get_connection()
+        df = pd.read_sql("""
+            SELECT COUNT(*) as count
+            FROM students_info
+            WHERE added_by = ?
+        """, conn, params=(st.session_state.username,))
+        conn.close()
+        return int(df['count'][0])
     except Exception:
         return 0
 
@@ -364,7 +371,6 @@ if st.session_state.logged_in:
         with col1:
             st.metric(label="Total Students", value=total, delta="5 New")
         with col2:
-            # ✅ FIX: ZeroDivisionError — check total before dividing
             if total > 0:
                 pct = f"{round((today_count * 100 / total), 2)}%"
             else:
@@ -378,10 +384,10 @@ if st.session_state.logged_in:
         df = pd.read_sql("""
             SELECT student_name, time, date
             FROM attendance_records
-            WHERE date = DATE('now', 'localtime')
+            WHERE date = DATE('now', 'localtime') AND added_by = ?
             ORDER BY id DESC
             LIMIT 5
-        """, conn)
+        """, conn, params=(st.session_state.username,))
         conn.close()
 
         if not df.empty:
@@ -422,7 +428,7 @@ if st.session_state.logged_in:
                             face_img = cv2.resize(face_img, (100, 100))
                             st.image(face_img, channels="BGR", width=300, caption="Face Detected")
                         save_data(name_input, frame, faces)
-                        stu_info(name_input)
+                        stu_info(name_input,st.session_state.username)
                         st.toast(f"{name_input} added 🎉")
                         st.balloons()
                     else:
@@ -435,7 +441,7 @@ if st.session_state.logged_in:
     # ── ATTENDANCE ────────────────────────────
     elif st.session_state.page == "Attendance":
         st.title("👤 ATTENDANCE RECOGNITION")
-        pca, model = load_models()
+        pca, model = load_models(st.session_state.username)
 
         if pca is None or model is None:
             st.error("Model not trained yet! Please train the model first from the sidebar.")
@@ -468,7 +474,7 @@ if st.session_state.logged_in:
                             current_date = now.strftime("%Y-%m-%d")
                             current_time = now.strftime("%I:%M:%S %p")
 
-                            if save_attendance_to_db(name, current_date, current_time):
+                            if save_attendance_to_db(name, current_date, current_time, st.session_state.username):
                                 st.success(f"✅ {name} Marked Present!")
                             else:
                                 st.warning(f"⚠️ {name} already marked present today.")
@@ -490,7 +496,7 @@ if st.session_state.logged_in:
         st.subheader("Student Information")
 
         conn = get_connection()
-        df = pd.read_sql("SELECT * FROM students_info", conn)
+        df = pd.read_sql("SELECT * FROM students_info", conn, params=(st.session_state.username,))
         conn.close()
 
         col1, col2, col3 = st.columns([1, 3, 1])
@@ -507,7 +513,7 @@ if st.session_state.logged_in:
                 if stu_name.strip() == "" or stu_id.strip() == "":
                     st.warning("Please enter both ID and Name before deleting!")
                 else:
-                    result = delete_student(stu_id, stu_name)
+                    result = delete_student(stu_id, stu_name,st.session_state.username)
                     if result:
                         st.success(f"✅ Successfully deleted {stu_name}")
                         st.rerun()
