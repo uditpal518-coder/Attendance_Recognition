@@ -653,18 +653,6 @@ if st.session_state.logged_in:
 
     elif st.session_state.page == "Admin Panel":
         st.title("🛠️ Admin Dashboard")
-        st.markdown("---")
-        col1,col2,col3 = st.columns(3)
-        conn = get_connection()
-        df=pd.read_sql(
-            "SELECT  count(*) as count FROM users WHERE role = user",
-            conn
-        )
-        conn.close()
-        user = int(df['count'][0]) if len(df) >0 else 0
-        with col2:
-            st.metric(label="Total Users", value=user, delta="new")
-            
         conn = get_connection()
     
         st.subheader("👥 Registered Users")
