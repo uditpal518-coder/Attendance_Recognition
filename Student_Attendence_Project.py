@@ -597,27 +597,27 @@ if st.session_state.logged_in:
 
     
     elif st.session_state.page == "Feedback":
-    st.title("💬 Your Feedback")
-
-    with st.form("feedback_form"):
-        feedback_text = st.text_area(
-            "Share your thoughts, suggestions, or issues:",
-            height=150,
-            placeholder="Write your feedback here..."
-        )
-
-        submitted = st.form_submit_button("Submit Feedback")
-
-        if submitted:
-            if feedback_text.strip():
-                save_feedback(
-                    st.session_state.username,
-                    feedback_text.strip()
-                )
-                st.success("Thank you for your feedback! 🌟")
-                st.balloons()
-            else:
-                st.warning("Please enter your feedback before submitting.")
+        st.title("💬 Your Feedback")
+    
+        with st.form("feedback_form"):
+            feedback_text = st.text_area(
+                "Share your thoughts, suggestions, or issues:",
+                height=150,
+                placeholder="Write your feedback here..."
+            )
+    
+            submitted = st.form_submit_button("Submit Feedback")
+    
+            if submitted:
+                if feedback_text.strip():
+                    save_feedback(
+                        st.session_state.username,
+                        feedback_text.strip()
+                    )
+                    st.success("Thank you for your feedback! 🌟")
+                    st.balloons()
+                else:
+                    st.warning("Please enter your feedback before submitting.")
 
 else:
     login_page()
