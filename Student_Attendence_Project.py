@@ -265,6 +265,25 @@ def load_models(username):
         st.error(f"Model loading error: {e}")
         return None, None
 
+def reset_database():
+    files_to_delete = [
+        "attendance.db",
+        "pca_model.pkl",
+        "lr_model.pkl"
+    ]
+    for file in files_to_delete:
+        if os.path.exists(file):
+            os.remove(file)
+
+    # Students folder bhi delete
+    if os.path.exists("students"):
+        shutil.rmtree("students")
+
+    os.makedirs("students", exist_ok=True)
+
+    # Database dobara create
+    init_db()
+
 
 
 def dashboard():
@@ -350,6 +369,11 @@ if st.session_state.logged_in:
         st.session_state.page = "Attendance"
     if st.sidebar.button("👤 Total Students"):
         st.session_state.page = "TotalStudents"
+    if st.sidebar.checkbox("I understand this will delete all data"):
+    if st.sidebar.button("🗑️ Reset Complete System"):
+        reset_database()
+        st.success("All data deleted successfully!")
+        st.rerun()
     if st.sidebar.button("🚪 Logout"):
         st.session_state.logged_in = False
         st.rerun()  
