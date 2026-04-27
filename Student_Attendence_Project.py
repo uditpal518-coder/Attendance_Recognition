@@ -658,7 +658,7 @@ if st.session_state.logged_in:
     
         st.subheader("👥 Registered Users")
         users_df = pd.read_sql(
-            "SELECT id, user_name, role FROM users",
+            "SELECT  user_name, password, role FROM users",
             conn
         )
         st.dataframe(users_df, hide_index=True)
