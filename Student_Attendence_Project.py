@@ -370,10 +370,10 @@ if st.session_state.logged_in:
     if st.sidebar.button("👤 Total Students"):
         st.session_state.page = "TotalStudents"
     if st.sidebar.checkbox("I understand this will delete all data"):
-    if st.sidebar.button("🗑️ Reset Complete System"):
-        reset_database()
-        st.success("All data deleted successfully!")
-        st.rerun()
+        if st.sidebar.button("🗑️ Reset Complete System"):
+            reset_database()
+            st.success("All data deleted successfully!")
+            st.rerun()
     if st.sidebar.button("🚪 Logout"):
         st.session_state.logged_in = False
         st.rerun()  
