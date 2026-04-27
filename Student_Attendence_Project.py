@@ -88,6 +88,15 @@ def init_db():
             password TEXT
         )
     """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_name TEXT,
+            feedback_text TEXT,
+            submitted_at TEXT
+        )
+    """)
     conn.commit()
 
 init_db()
@@ -288,6 +297,21 @@ def reset_database():
     # Database dobara create
     init_db()
 
+def save_feedback(name, feedback):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO feedback (user_name, feedback_text, submitted_at)
+        VALUES (?, ?, ?)
+    """, (
+        name,
+        feedback,
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ))
+
+    conn.commit()
+    conn.close()
+
 
 
 def dashboard():
@@ -384,6 +408,10 @@ if st.session_state.logged_in:
             reset_database()
             st.success("All data deleted successfully!")
             st.rerun()
+
+    st.sidebar.markdown("---")
+    if st.sidebar.button("💬 Feedback"):
+        st.session_state.page = "Feedback"
     
     st.sidebar.markdown("---")
     if st.sidebar.button("⚙️ System Train"):
@@ -521,7 +549,7 @@ if st.session_state.logged_in:
                 else:
                     st.warning("Face not detected! Please try again.")
 
-    # ── TOTAL STUDENTS ────────────────────────
+    # TOTAL STUDENTS 
     elif st.session_state.page == "TotalStudents":
         st.title("📋 Total Registered Students")
         st.subheader("Student Information")
@@ -566,6 +594,30 @@ if st.session_state.logged_in:
             )
         else:
             st.warning("No student data found!")
+
+    
+    elif st.session_state.page == "Feedback":
+    st.title("💬 Your Feedback")
+
+    with st.form("feedback_form"):
+        feedback_text = st.text_area(
+            "Share your thoughts, suggestions, or issues:",
+            height=150,
+            placeholder="Write your feedback here..."
+        )
+
+        submitted = st.form_submit_button("Submit Feedback")
+
+        if submitted:
+            if feedback_text.strip():
+                save_feedback(
+                    st.session_state.username,
+                    feedback_text.strip()
+                )
+                st.success("Thank you for your feedback! 🌟")
+                st.balloons()
+            else:
+                st.warning("Please enter your feedback before submitting.")
 
 else:
     login_page()
