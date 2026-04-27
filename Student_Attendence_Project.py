@@ -271,6 +271,10 @@ def reset_database():
         "pca_model.pkl",
         "lr_model.pkl"
     ]
+
+    for file in os.listdir():
+        if file.endswith("_pca.pkl") or file.endswith("_lr.pkl"):
+            files_to_delete.append(file)
     for file in files_to_delete:
         if os.path.exists(file):
             os.remove(file)
