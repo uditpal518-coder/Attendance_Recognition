@@ -340,6 +340,7 @@ def login_page():
                 if log:
                     st.session_state.logged_in = True
                     st.session_state.username = username
+                    st.session_state.page = "Home"
                     st.rerun()   
                 else:
                     st.error("Incorrect Username or Password")
