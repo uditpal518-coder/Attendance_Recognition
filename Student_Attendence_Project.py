@@ -648,6 +648,8 @@ if st.session_state.logged_in:
                     )
                     st.success("Thank you for your feedback! 🌟")
                     st.balloons()
+                    time.sleep(1)
+                    st.rerun()
                 else:
                     st.warning("Please enter your feedback before submitting.")
 
