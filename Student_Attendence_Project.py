@@ -92,7 +92,10 @@ def init_db():
             role TEXT DEFAULT 'user'
         )
     """)
-
+    try:
+    cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'")
+    except sqlite3.OperationalError:
+        pass
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS feedback (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
