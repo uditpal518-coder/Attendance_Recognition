@@ -253,8 +253,8 @@ def train_system():
 
 @st.cache_resource
 def load_models(username):
-    pca_path = f"{username}_pca.pkl"
-    model_path = f"{username}_lr.pkl"
+    pca_path = f"{username}_pca_model.pkl"
+    model_path = f"{username}_lr_model.pkl"
     if not os.path.exists(pca_path) or not os.path.exists(model_path):
         return None, None
     try:
