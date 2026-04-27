@@ -93,7 +93,7 @@ def init_db():
         )
     """)
     try:
-    cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'")
+        cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'")
     except sqlite3.OperationalError:
         pass
     cursor.execute("""
