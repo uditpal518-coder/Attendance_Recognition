@@ -526,7 +526,7 @@ if st.session_state.logged_in:
         st.subheader("Student Information")
 
         conn = get_connection()
-        df = pd.read_sql("SELECT * FROM student_info WHERE added_by = ?", conn, params=(st.session_state.username))
+        df = pd.read_sql("SELECT * FROM students_info WHERE added_by = ?", conn, params=(st.session_state.username))
         conn.close()
 
         col1, col2, col3 = st.columns([1, 3, 1])
