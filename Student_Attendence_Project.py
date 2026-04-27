@@ -654,7 +654,7 @@ if st.session_state.logged_in:
     elif st.session_state.page == "Admin Panel":
         st.title("🛠️ Admin Dashboard")
         st.markdown("---")
-        col1,col2,col3 = st.column(3)
+        col1,col2,col3 = st.columns(3)
         conn = get_connection()
         df=pd.read_sql(
             "SELECT  count(*) as count FROM users WHERE role = user",
