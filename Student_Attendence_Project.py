@@ -56,6 +56,9 @@ if 'page' not in st.session_state:
 if 'username' not in st.session_state:
     st.session_state.username = ""
 
+if "role" not in st.session_state:
+    st.session_state.role = "user"
+
 
 def get_connection():
     """Single reusable connection helper."""
@@ -86,6 +89,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             user_name TEXT UNIQUE,
             password TEXT
+            role TEXT DEFAULT 'user'
         )
     """)
 
@@ -99,7 +103,26 @@ def init_db():
     """)
     conn.commit()
 
+def create_default_admin():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM users WHERE user_name = ?",
+        ("admin",)
+    )
+
+    if not cursor.fetchone():
+        cursor.execute("""
+            INSERT INTO users (user_name, password, role)
+            VALUES (?, ?, ?)
+        """, ("admin", "admin123", "admin"))
+        conn.commit()
+
+    conn.close()
+
 init_db()
+create_default_admin()
 
 def users_info(name,password):
     try:
@@ -119,19 +142,20 @@ def login_user(name,password):
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM users WHERE user_name = ? and password = ?",
+            "SELECT user_name, role FROM users WHERE user_name = ? and password = ?",
             (name,password)
         )
         data = cursor.fetchone()
         conn.close()
 
         if data:
-            return True
+            return data
         else:
             return False
     except Exception as e:
         st.error(f"Database Error: {e}")
         return False
+        
 
 def user_base_dir():
     path = os.path.join(BASE_DIR, st.session_state.username)
@@ -363,7 +387,8 @@ def login_page():
                 log = login_user(username,password)
                 if log:
                     st.session_state.logged_in = True
-                    st.session_state.username = username
+                    st.session_state.username = log[0]
+                    st.session_state.role = log[1]
                     st.session_state.page = "Home"
                     st.rerun()   
                 else:
@@ -399,8 +424,15 @@ if st.session_state.logged_in:
     if st.sidebar.button("👤 Total Students"):
         st.session_state.page = "TotalStudents"
 
+    if st.session_state.role == "admin":
+        if st.sidebar.button("🛠️ Admin Panel"):
+            st.session_state.page = "Admin Panel"
+
     if st.sidebar.button("🚪 Logout"):
         st.session_state.logged_in = False
+        st.session_state.username = ""
+        st.session_state.role = "user"
+        st.session_state.page = "Home"
         st.rerun()  
 
     if st.sidebar.checkbox("I understand this will delete all data"):
@@ -618,6 +650,27 @@ if st.session_state.logged_in:
                     st.balloons()
                 else:
                     st.warning("Please enter your feedback before submitting.")
+
+    elif st.session_state.page == "Admin Panel":
+        st.title("🛠️ Admin Dashboard")
+    
+        conn = get_connection()
+    
+        st.subheader("👥 Registered Users")
+        users_df = pd.read_sql(
+            "SELECT id, user_name, role FROM users",
+            conn
+        )
+        st.dataframe(users_df, hide_index=True)
+    
+        st.subheader("💬 User Feedback")
+        feedback_df = pd.read_sql(
+            "SELECT * FROM feedback ORDER BY id DESC",
+            conn
+        )
+        st.dataframe(feedback_df, hide_index=True)
+    
+        conn.close()
 
 else:
     login_page()
