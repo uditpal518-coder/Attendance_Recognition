@@ -227,7 +227,7 @@ def train_system():
 
         for name in folders:
             for img_file in os.listdir(os.path.join(base, name)):
-                img_path = os.path.join(BASE_DIR, name, img_file)
+                img_path = os.path.join(base, name, img_file)
                 img = cv2.imread(img_path)
                 if img is not None:
                     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
