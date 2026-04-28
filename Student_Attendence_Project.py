@@ -425,7 +425,12 @@ if st.session_state.logged_in:
         st.session_state.page = "TotalStudents"
 
     if st.session_state.role == "admin":
-        if st.sidebar.button("🛠️ Admin Panel"):
+        if st.sidebar.checkbox("I understand this will delete all data"):
+            if st.sidebar.button("🗑️ Reset Complete System"):
+                reset_database()
+                st.success("All data deleted successfully!")
+                st.rerun()
+        elif st.sidebar.button("🛠️ Admin Panel"):
             st.session_state.page = "Admin Panel"
 
     if st.sidebar.button("🚪 Logout"):
@@ -435,11 +440,7 @@ if st.session_state.logged_in:
         st.session_state.page = "Home"
         st.rerun()  
 
-    if st.sidebar.checkbox("I understand this will delete all data"):
-        if st.sidebar.button("🗑️ Reset Complete System"):
-            reset_database()
-            st.success("All data deleted successfully!")
-            st.rerun()
+    
 
     st.sidebar.markdown("---")
     if st.sidebar.button("💬 Feedback"):
