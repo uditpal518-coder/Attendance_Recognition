@@ -443,8 +443,9 @@ if st.session_state.logged_in:
     
 
     st.sidebar.markdown("---")
-    if st.sidebar.button("💬 Feedback"):
-        st.session_state.page = "Feedback"
+    if st.session_state.role == "user"
+        if st.sidebar.button("💬 Feedback"):
+            st.session_state.page = "Feedback"
     
     st.sidebar.markdown("---")
     if st.sidebar.button("⚙️ System Train"):
