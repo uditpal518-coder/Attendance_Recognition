@@ -497,7 +497,7 @@ if st.session_state.logged_in:
 
     # ── ADD STUDENT ───────────────────────────
     elif st.session_state.page == "Add Students":
-        st.title("👤 REGISTER NEW STUDENT")
+        st.title("👤 Register New Student")
         with st.form("add_student_detail", clear_on_submit=True):
             name_input = st.text_input("Enter Student Name").capitalize()
             camera_img = st.camera_input("Take Photo!")
@@ -529,7 +529,7 @@ if st.session_state.logged_in:
 
     # ── ATTENDANCE ────────────────────────────
     elif st.session_state.page == "Attendance":
-        st.title("👤 ATTENDANCE RECOGNITION")
+        st.title("👤 Attendance Recognition")
         pca, model = load_models(st.session_state.username)
 
         if pca is None or model is None:
