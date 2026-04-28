@@ -88,7 +88,7 @@ def init_db():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             user_name TEXT UNIQUE,
-            password TEXT
+            password TEXT,
             role TEXT DEFAULT 'user'
         )
     """)
