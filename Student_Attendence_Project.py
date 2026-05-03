@@ -367,14 +367,9 @@ def dashboard_total():
 
 def login_page():
     col1, col2, col3 = st.columns([2, 2, 2])
-    with col1:
-        conn = get_connection()
-        df = pd.read_sql("SELECT * FROM users", conn)
-        conn.close()
-        st.table(df)
     with col2:
-        st.markdown("<h1 style='text-align:center;'>🔐Welcome</h1>", unsafe_allow_html=True)
         st.markdown("<h1 style='text-align:center;'>Attendance System </h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center;'>🔐Welcome</h3>", unsafe_allow_html=True)
         choice = st.radio("Select Option", ["Login", "Sign Up"], horizontal=True)
 
         if choice == "Login":
