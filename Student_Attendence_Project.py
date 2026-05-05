@@ -674,8 +674,8 @@ if st.session_state.logged_in:
             "SELECT  user_name, password, role FROM users",
             conn
         )
-        user_df.insert(0, 'S.No', range(1, 1 + len(user_df)))
-        user_df['S.No'] = user_df['S.No'].astype(str)
+        users_df.insert(0, 'S.No', range(1, 1 + len(users_df)))
+        # users_df['S.No'] = users_df['S.No'].astype(str)
         st.dataframe(users_df, hide_index=True,use_container_width=True)
     
         st.subheader("💬 User Feedback")
