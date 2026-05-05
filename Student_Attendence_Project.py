@@ -675,6 +675,7 @@ if st.session_state.logged_in:
             conn
         )
         user_df.insert(0, 'S.No', range(1, 1 + len(user_df)))
+        user_df['S.No'] = user_df['S.No'].astype(str)
         st.dataframe(users_df, hide_index=True,use_container_width=True)
     
         st.subheader("💬 User Feedback")
