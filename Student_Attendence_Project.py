@@ -589,7 +589,7 @@ if st.session_state.logged_in:
                             st.image(face_img, caption=name, use_container_width=True)
                             st.balloons()
                         else:
-                            st.error("Unknown Person — Access Denied ❌")
+                            st.error("Unknown Person ❌")
                 else:
                     st.warning("Face not detected! Please try again.")
 
@@ -674,7 +674,8 @@ if st.session_state.logged_in:
             "SELECT  user_name, password, role FROM users",
             conn
         )
-        st.dataframe(users_df, hide_index=False,use_container_width=True)
+        user_df.insert(0, 'S.No', range(1, 1 + len(user_df)))
+        st.dataframe(users_df, hide_index=True,use_container_width=True)
     
         st.subheader("💬 User Feedback")
         feedback_df = pd.read_sql(
