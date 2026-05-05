@@ -39,6 +39,24 @@ h1, h2, h3 {
     padding: 2rem;
     border-radius: 15px;
 }
+@media (max-width: 768px) {
+    .block-container {
+        padding: 1rem;
+    }
+    h1 {
+        font-size: 1.8rem !important;
+    }
+    h2 {
+        font-size: 1.5rem !important;
+    }
+    h3 {
+        font-size: 1.2rem !important;
+    }
+    .stButton>button {
+        font-size: 14px;
+        height: 2.5em;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -369,7 +387,7 @@ def login_page():
     col1, col2, col3 = st.columns([2, 2, 2])
     with col2:
         st.markdown("<h1 style='text-align:center;'>Attendance System </h1>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align:center;'>🔐Welcome</h3>", unsafe_allow_html=True)
+        st.markdown("<h5 style='text-align:center;'>🔐Welcome</h5>", unsafe_allow_html=True)
         choice = st.radio("Select Option", ["Login", "Sign Up"], horizontal=True)
 
         if choice == "Login":
@@ -476,7 +494,7 @@ if st.session_state.logged_in:
 
         if not df.empty:
             df['time'] = pd.to_datetime(df['time']).dt.strftime("%I:%M %p")
-            st.table(df)
+            st.dataframe(df, use_container_width=True, hide_index=True)
         else:
             st.info("No attendance marked for today yet!")
 
@@ -486,6 +504,7 @@ if st.session_state.logged_in:
             data=csv,
             file_name="attendance_today.csv",
             mime="text/csv",
+            use_container_width=True
         )
         st.markdown("---")
         st.warning("⚠️ Data resets on cloud restart (Streamlit Cloud uses temporary storage)")
@@ -510,7 +529,7 @@ if st.session_state.logged_in:
                         for (x, y, w, h) in faces:
                             face_img = frame[y:y+h, x:x+w]
                             face_img = cv2.resize(face_img, (100, 100))
-                            st.image(face_img, channels="BGR", width=300, caption="Face Detected")
+                            st.image(face_img, channels="BGR", use_container_width=True, caption="Face Detected")
                         save_data(name_input, frame, faces)
                         stu_info(name_input,st.session_state.username)
                         st.toast(f"{name_input} added 🎉")
@@ -567,7 +586,7 @@ if st.session_state.logged_in:
                             st.success(f"Confidence Score: {confidence:.2f}%")
                             st.success(f"Date: {current_date}")
                             st.success(f"Time: {current_time}")
-                            st.image(face_img, caption=name, width=150)
+                            st.image(face_img, caption=name, use_container_width=True)
                             st.balloons()
                         else:
                             st.error("Unknown Person — Access Denied ❌")
@@ -591,7 +610,8 @@ if st.session_state.logged_in:
             stu_name = st.text_input("Student Name")
             stu_name = stu_name.capitalize()
         with col3:
-            if st.button("❌ Delete"):
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("❌ Delete", use_container_width=True):
                 if stu_name.strip() == "" or stu_id.strip() == "":
                     st.warning("Please enter both ID and Name before deleting!")
                 else:
@@ -606,7 +626,7 @@ if st.session_state.logged_in:
             df.insert(0, 'S.No', range(1, 1 + len(df)))
             df['S.No'] = df['S.No'].astype(str)
             df['id'] = df['id'].astype(str)
-            st.dataframe(df, hide_index=True)
+            st.dataframe(df, hide_index=True, use_container_width=True)
 
             csv = df.to_csv(index=False).encode('utf-8')
             st.download_button(
@@ -614,6 +634,7 @@ if st.session_state.logged_in:
                 data=csv,
                 file_name="students_data.csv",
                 mime="text/csv",
+                use_container_width=True
             )
         else:
             st.warning("No student data found!")
@@ -629,7 +650,7 @@ if st.session_state.logged_in:
                 placeholder="Write your feedback here..."
             )
     
-            submitted = st.form_submit_button("Submit Feedback")
+            submitted = st.form_submit_button("Submit Feedback", use_container_width=True)
     
             if submitted:
                 if feedback_text.strip():
@@ -653,14 +674,14 @@ if st.session_state.logged_in:
             "SELECT  user_name, password, role FROM users",
             conn
         )
-        st.dataframe(users_df, hide_index=True)
+        st.dataframe(users_df, hide_index=False,use_container_width=True)
     
         st.subheader("💬 User Feedback")
         feedback_df = pd.read_sql(
             "SELECT * FROM feedback ORDER BY id DESC",
             conn
         )
-        st.dataframe(feedback_df, hide_index=True)
+        st.dataframe(feedback_df, hide_index=True,use_container_width=True)
     
         conn.close()
 
