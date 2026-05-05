@@ -675,7 +675,7 @@ if st.session_state.logged_in:
             conn
         )
         users_df.insert(0, 'S.No', range(1, 1 + len(users_df)))
-        # users_df['S.No'] = users_df['S.No'].astype(str)
+        users_df['S.No'] = users_df['S.No'].astype(str)
         st.dataframe(users_df, hide_index=True,use_container_width=True)
     
         st.subheader("💬 User Feedback")
@@ -683,6 +683,7 @@ if st.session_state.logged_in:
             "SELECT * FROM feedback ORDER BY id DESC",
             conn
         )
+        feedback_df['id'] = feedback_df['id'].astype(str)
         st.dataframe(feedback_df, hide_index=True,use_container_width=True)
     
         conn.close()
