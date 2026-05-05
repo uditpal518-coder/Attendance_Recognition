@@ -580,7 +580,7 @@ if st.session_state.logged_in:
         st.subheader("Student Information")
 
         conn = get_connection()
-        df = pd.read_sql("SELECT * FROM students_info WHERE added_by = ?", conn, params=(st.session_state.username,))
+        df = pd.read_sql("SELECT id,student_name FROM students_info WHERE added_by = ?", conn, params=(st.session_state.username,))
         conn.close()
 
         col1, col2, col3 = st.columns([1, 3, 1])
@@ -591,8 +591,8 @@ if st.session_state.logged_in:
             stu_name = st.text_input("Student Name")
             stu_name = stu_name.capitalize()
         with col3:
-            st.write("")
-            st.write("")
+            st.write("hi")
+            st.write("hello")
             if st.button("❌ Delete"):
                 if stu_name.strip() == "" or stu_id.strip() == "":
                     st.warning("Please enter both ID and Name before deleting!")
