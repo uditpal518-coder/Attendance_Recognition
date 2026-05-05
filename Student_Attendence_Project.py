@@ -624,7 +624,7 @@ if st.session_state.logged_in:
     elif st.session_state.page == "Feedback":
         st.title("💬 Your Feedback")
     
-        with st.form("feedback_form"):
+        with st.form("feedback_form", clear_on_submit=True):
             feedback_text = st.text_area(
                 "Share your thoughts, suggestions, or issues:",
                 height=150,
