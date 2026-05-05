@@ -591,8 +591,6 @@ if st.session_state.logged_in:
             stu_name = st.text_input("Student Name")
             stu_name = stu_name.capitalize()
         with col3:
-            st.write("hi")
-            st.write("hello")
             if st.button("❌ Delete"):
                 if stu_name.strip() == "" or stu_id.strip() == "":
                     st.warning("Please enter both ID and Name before deleting!")
