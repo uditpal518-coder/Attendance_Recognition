@@ -63,7 +63,8 @@ h1, h2, h3 {
 
 BASE_DIR = "students"
 os.makedirs(BASE_DIR, exist_ok=True)
-HAAR_FILE = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+#HAAR_FILE = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+HAAR_FILE = "haarcascade_frontalface_default.xml"
 
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
